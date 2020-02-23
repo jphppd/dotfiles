@@ -337,16 +337,6 @@ repos:
 # GOPATH=~/.go go get -u mvdan.cc/sh/cmd/shfmt
 # cp ~/.go/bin/shfmt ~/.local/bin
 
-  - repo: https://github.com/bemeurer/beautysh.git
-    rev: 5.0.2
-    hooks:
-      - id: beautysh
-
-  - repo: https://github.com/openstack-dev/bashate.git
-    rev: 1.0.0
-    hooks:
-      - id: bashate
-
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 1.11.2
     hooks:

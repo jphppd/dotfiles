@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091
+#
+# executed by bash(1) for login-shells
+#
+
+should_launch_ssh_agent() {
+  [[ -x /usr/bin/ssh-agent ]] &&
+    [[ -z "${SSH_TTY}" ]] &&
+    [[ -z "${SSH_AGENT_PID}" ]]
+  return $?
+}
+
+should_startx() {
+  [[ "$UID" -ne 0 ]] &&
+    [[ -z $DISPLAY ]] &&
+    [[ -x /usr/bin/startx ]] &&
+    [[ $(tty) == "/dev/tty1" ]]
+  return $?
+}
+
+if [[ -f "${HOME}/.bashrc" ]] && [[ "$-" == *i* ]]; then
+  source "${HOME}/.bashrc"
+fi
+
+if should_launch_ssh_agent; then
+  eval "$(/usr/bin/ssh-agent)"
+fi
+
+if should_startx; then
+  /usr/bin/startx
+fi
