@@ -1,0 +1,89 @@
+# Config file for "readline"
+# (readline will read a line from the terminal and return it)
+
+# some defaults / modifications for the emacs mode
+$if mode=emacs
+
+    # Trick to get the code:
+    # execute command "cat -v"
+    # then press the key, and replace ^[ by \e
+
+    # allow the use of the Home/End keys
+    "\e[1~": beginning-of-line
+    "\e[4~": end-of-line
+
+    # allow the use of the Delete/Insert keys
+    "\e[3~": delete-char
+    "\e[2~": quoted-insert
+    # mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+    "\e[1;5C": forward-word
+    "\e[1;5D": backward-word
+    "\e[5C": forward-word
+    "\e[5D": backward-word
+    "\e\e[C": forward-word
+    "\e\e[D": backward-word
+
+    # search through history with Ctrol-arrow
+    "\e[1;5A": history-search-backward
+    "\e[1;5B": history-search-forward
+
+    $if term=rxvt
+        "\e[7~": beginning-of-line
+        "\e[8~": end-of-line
+        "\eOc": forward-word
+        "\eOd": backward-word
+    $endif
+
+    # Various shortcuts, accessible with ESC+{key}
+    # Add "sudo" in front of the line
+    "\es": '\C-asudo \C-e'
+    # grep
+    "\eg": '\C-a\C-kgrep -ri "" .\C-b\C-b\C-b'
+    "\eG": '\C-a\C-kgrep -r "" .\C-b\C-b\C-b'
+    # find
+    "\ef": '\C-a\C-kfind . -iname "**"\C-b\C-b'
+    "\eF": '\C-a\C-kfind . -name "**"\C-b\C-b'
+    # open
+    "\eo": '\C-axdg-open \C-e'
+    # repeat first argument
+    # example: "mv long_file_name" > "mv long_file_name long_file_name"
+    "\er": '\C-a\ef\C-k\C-y\C-y'
+
+    # Completion: Tab doesn't loop, Shift+Tab loop between propositions
+    Tab: complete
+    "\e[Z": menu-complete
+
+$endif
+
+# always expand `~` to user's directory full path
+set expand-tilde on
+
+# show extra information in the output, similar to `ls -F`
+set visible-stats on
+
+# make autocomplete case-insensitive
+set completion-ignore-case on
+
+# immediately show the completions list
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+
+# add a trailing slash to symlinked directories
+set mark-symlinked-directories on
+
+# show the "Display (...) possibilities?" prompt only for long lists
+set completion-query-items 50
+
+# disable the sound bell
+set bell-style visible
+
+# Color completion
+set colored-completion-prefix on
+set colored-stats on
+
+# disable the "-- more --" prompt for long lists
+set page-completions off
+
+# Be 8 bit clean.
+set input-meta on
+set output-meta on
