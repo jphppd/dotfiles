@@ -272,8 +272,8 @@ repos:
 # Python Linter #
 #################
 
-  - repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v2.4.4
+  - repo: https://github.com/PyCQA/pylint.git
+    rev: pylint-2.4.4
     hooks:
       - id: pylint
         args:
