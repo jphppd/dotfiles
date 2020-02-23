@@ -5,7 +5,7 @@
 #
 
 # If not running interactively, don't do anything
-if [[ "$-" == *i* ]]; then
+if [[ "$-" != *i* ]]; then
   return
 fi
 

@@ -11,7 +11,7 @@ should_launch_ssh_agent() {
   return $?
 }
 
-should_startx() {
+should_run_display() {
   [[ "$UID" -ne 0 ]] &&
     [[ -z $DISPLAY ]] &&
     [[ -x /usr/bin/startx ]] &&
@@ -27,6 +27,10 @@ if should_launch_ssh_agent; then
   eval "$(/usr/bin/ssh-agent)"
 fi
 
-if should_startx; then
-  /usr/bin/startx
+if should_run_display; then
+  if [ -x /usr/local/bin/sway ]; then
+    exec /usr/local/bin/sway
+  else
+    /usr/bin/startx
+  fi
 fi

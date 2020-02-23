@@ -15,4 +15,4 @@ apack "${SKEL_DIR}/skel.tar.gz" "${skel_content[@]}"
 
 x_skel_content=(.xinitrc .Xresources)
 x_skel_content+=(.i3 .i3status.conf)
-apack "${SKEL_DIR}/x_skel.tar.gz" "${skel_content[@]}"
+apack "${SKEL_DIR}/x_skel.tar.gz" "${x_skel_content[@]}"
