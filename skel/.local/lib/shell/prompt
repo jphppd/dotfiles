@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC1117
+
+export PROMPT_COMMAND=__prompt_command
+
+__prompt_command() {
+  local exit_code="$?" # This needs to be first
+
+  local reset='\[\e[0m\]'
+  local bold='\[\e[1m\]'
+  local red='\[\e[31m\]'
+  local green='\[\e[32m\]'
+  local yellow='\[\e[33m\]'
+  local blue='\[\e[34m\]'
+  local magenta='\[\e[35m\]'
+  local cyan='\[\e[36m\]'
+  local lightred='\[\e[91m\]'
+  local lightcyan='\[\e[96m\]'
+
+  local exit_status=""
+  local user=""
+  local host=""
+  local dir=""
+  local git=""
+  local dollar=""
+  local venv=""
+
+  if [ "$exit_code" != 0 ]; then
+    exit_status="[${bold}${lightred}${exit_code}${reset}]"
+  else
+    exit_status="[${green}${exit_code}${reset}]"
+  fi
+
+  if [ "$(id -u)" -eq 0 ]; then
+    user="${bold}${red}\u${reset}"
+  else
+    user="${blue}\u${reset}"
+  fi
+
+  if [ -z "$SSH_CLIENT" ]; then
+    host="${cyan}\h${reset}"
+  else
+    if [ -z "$SSH_AUTH_SOCK" ]; then
+      host="${lightcyan}\h${reset}"
+    else
+      host="${lightcyan}\h(*)${reset}"
+    fi
+  fi
+
+  dir="${magenta}\w${reset} "
+  dollar="\\\$ "
+
+  # GIT
+  if command -v git >/dev/null && command -v __git_ps1 >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
+    if [ -z "$(git status --porcelain)" ]; then
+      # Clean repo
+      git="${green}\$(__git_ps1 '(%s)')${reset} "
+    else
+      git="${red}\$(__git_ps1 '(%s)')${reset} "
+    fi
+  fi
+
+  # Python virtualenv
+  if [ -n "${VIRTUAL_ENV}" ]; then
+    venv="${yellow}(venv:$(basename "${VIRTUAL_ENV}"))${reset} "
+  fi
+
+  # Concatenation des elements
+  PS1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}${dollar}"
+
+  # Set the title to user@host:dir
+  case "$TERM" in
+    xterm* | rxvt*)
+      PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+      ;;
+  esac
+}
+
+export GIT_PS1_SHOWUNTRACKEDFILES=1
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWSTASHSTATE=1
+export GIT_PS1_SHOWUPSTREAM=verbose name
+export GIT_PS1_DESCRIBE_STYLE=branch

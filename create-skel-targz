@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+SKEL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)/skel"
+
+rm --force "${SKEL_DIR}/skel.tar.gz"
+rm --force "${SKEL_DIR}/x_skel.tar.gz"
+
+pushd "${SKEL_DIR}" || exit
+
+skel_content=(.bash_login .bash_logout .bashrc)
+skel_content+=(.gitconfig)
+skel_content+=(.gdbinit .inputrc .tmux.conf .vimrc)
+skel_content+=(.local .ssh)
+apack "${SKEL_DIR}/skel.tar.gz" "${skel_content[@]}"
+
+x_skel_content=(.xinitrc .Xresources)
+x_skel_content+=(.i3 .i3status.conf)
+apack "${SKEL_DIR}/x_skel.tar.gz" "${skel_content[@]}"

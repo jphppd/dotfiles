@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+# Define aliases and exported variables for every shell
+
+# alias may be unavailable, for example in busybox shell
+if type alias >/dev/null 2>/dev/null; then
+  # Be verbose!
+  alias mkdir='mkdir --verbose'
+  alias mount='mount --verbose'
+  alias umount='umount --verbose'
+  alias ln='ln --verbose'
+  alias rm='rm --verbose'
+  # Be interactive when overwritting files
+  alias cp='cp --interactive --verbose'
+  alias mv='mv --interactive --verbose'
+
+  # Only show changes, if available
+  case $(chmod --help 2>&1) in
+    --changes* | *\ --changes* | *"$(printf '\t')"--changes*)
+      alias chmod='chmod --changes'
+      ;;
+    *)
+      alias chmod='chmod --verbose'
+      ;;
+  esac
+  case $(chown --help 2>&1) in
+    --changes* | *\ --changes* | *"$(printf '\t')"--changes*)
+      alias chown='chown --changes'
+      ;;
+    *)
+      alias chown='chown --verbose'
+      ;;
+  esac
+
+  # Make "strings" never treat files as objects (more secure)
+  alias strings='strings --all'
+
+  # List files, using available ls options
+  get_ls_parameters() {
+    local LINE COLOR_OPT ESCAPE_OPT TIMESTYLE_OPT
+    # CFh = columns, classify, human
+    printf ' -C --classify --human-readable'
+    # shellcheck disable=SC2012
+    ls --help 2>&1 | (
+      COLOR_OPT=
+      ESCAPE_OPT=
+      TIMESTYLE_OPT=
+      while IFS= read -r LINE; do
+        case "$LINE" in
+          *--color*)
+            COLOR_OPT=' --color=always'
+            ;;
+          *--escape*)
+            ESCAPE_OPT=' --escape'
+            ;;
+          *--time-style*)
+            # the backslashed values get replaced by printf
+            TIMESTYLE_OPT=' --time-style="+\033[0;35m%%Y-%%m-%%d %%H:%%M\033[0m"'
+            ;;
+        esac
+      done
+      # shellcheck disable=SC2059
+      printf "$COLOR_OPT$ESCAPE_OPT$TIMESTYLE_OPT"
+    )
+  }
+
+  # shellcheck disable=SC2139
+  alias ls="ls$(get_ls_parameters)"
+  alias l='ls'
+  alias la='ls --almost-all'
+  alias ll='ls -l'
+  alias lla='ls -l --size --almost-all'
+
+  # Options for grep: highlight results and exclude backup files
+  # Do not use GREP_OPTIONS so that directly invoking grep does not enable
+  # these options (for example with lgrep alias).
+  get_grep_parameters() {
+    local LINE COLOR_OPT EXCLUDE_DIR_OPT EXCLUDE_OPT
+    grep --help 2>/dev/null | (
+      COLOR_OPT=
+      EXCLUDE_DIR_OPT=
+      EXCLUDE_OPT=
+      TEXT_OPT=
+      LINE_NUMBER_OPT=
+      while IFS= read -r LINE; do
+        case "$LINE" in
+          *--color*)
+            COLOR_OPT=' --color=auto'
+            ;;
+          *--exclude-dir*)
+            EXCLUDE_DIR_OPT=' --exclude-dir=.git --exclude-dir=.svn'
+            ;;
+          *--exclude*)
+            EXCLUDE_OPT=" --exclude='*~'"
+            ;;
+          *--text*)
+            TEXT_OPT=" --text"
+            ;;
+          *--line-number*)
+            LINE_NUMBER_OPT=" --line-number"
+            ;;
+        esac
+      done
+      # shellcheck disable=SC2059
+      printf "$COLOR_OPT$TEXT_OPT$LINE_NUMBER_OPT$EXCLUDE_DIR_OPT$EXCLUDE_OPT"
+    )
+  }
+  # shellcheck disable=SC2139
+  alias ggrep="grep$(get_grep_parameters)"
+
+  # Line-buffered grep, useful when selecting output of tail -F
+  # Don't use colored output for lgrep
+  case $(grep --help 2>/dev/null) in
+    *--line-buffered*)
+      if [ -x /usr/bin/grep ]; then
+        alias lgrep='/usr/bin/grep --line-buffered'
+      elif [ -x /bin/grep ]; then
+        alias lgrep='/bin/grep --line-buffered'
+      else
+        alias lgrep='\grep --line-buffered'
+      fi
+      ;;
+  esac
+
+  # Strip commented lines
+  alias stripcom="grep -v -E '"'^[ \r\t]*(#|;|$)'"'"
+
+  # Show 3 months by default with cal
+  alias cal='cal -3'
+
+  # Display date in ISO 8601 format
+  alias isodate='date --iso-8601'
+  alias isotime='date --iso-8601=seconds'
+  alias isoutctime='date -iso-8601=seconds --utc'
+
+  # OpenSSL shortcuts
+  # View a certificate request (add -verify to check it)
+  alias openssl-csr='openssl req -noout -text -in'
+  # View a x509 certificate
+  alias openssl-crt='openssl x509 -noout -text -in'
+  # View a binary (not base64-encoded) x509 certificate (DER format)
+  alias openssl-der='openssl x509 -noout -text -inform DER -in'
+  # View a PKCS#12 file (.pfx or .p12)
+  alias openssl-p12='openssl pkcs12 -info -in'
+  # View a RSA private key file
+  alias openssl-rsa='openssl rsa -noout -text -in'
+  # Make a SSL connection to IP:port
+  alias openssl-connect='openssl s_client -connect'
+
+  # Colored "ip" command, since iproute2 4.1.0
+  case $(ip --help 2>&1) in
+    *-c\[olor\]*)
+      alias ip='ip -color'
+      ;;
+  esac
+
+  # Colored diff
+  if command -v colordiff >/dev/null; then
+    alias diff='colordiff --unified'
+  else
+    alias diff='diff --unified'
+  fi
+
+  # Diff for patches: all text, new file, show C function, unified context
+  alias diff-patch='diff --text --new-file --show-c-function --unified'
+
+  # Colored dmesg
+  # "sdmesg" (= sudo dmesg) is needed with /proc/sys/kernel/dmesg_restrict
+  case $(dmesg --help 2>/dev/null) in
+    *--color*)
+      alias dmesg='dmesg --color'
+      ;;
+  esac
+
+  if command -v most >/dev/null; then
+    alias man='man --pager=most'
+  fi
+
+  # X Window bell
+  if command -v xset >/dev/null; then
+    alias xbell-off='xset b off'
+    alias xbell-on='xset b on'
+  fi
+fi

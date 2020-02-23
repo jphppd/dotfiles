@@ -1,0 +1,323 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2015-2018 Nicolas Iooss
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+"""
+Encode a float number into hexadecimal representation or decode an hex number
+
+Encoding uses IEEE 754 specifications. In these specifications, a number n is
+represented using:
+* a sign s, 0 for positive numbers and 1 for negative ones
+* a significant, with a fraction part f, which is a positive or nul integer
+* a precision p, which is the number of bits in s
+* a base b = 2
+* an exponent e, which is a signed integer
+
+Then n = (-1)^s * (1 + (f / 2^(p-1))) * 2^e
+
+Sometimes the fraction is also called mantissa.
+
+The single-precision format encodes a float number on 32 bits:
+* 1 bit for the sign
+* 8 bits for the exponent, which is encoded relatively to -127
+* 23 bits for the fraction (24 for the significant)
+
+For example, 1 is encoded with s=0, e=0, f=0, so by 127 * 2^23 = 0x3f800000.
+Another example is 42 = 32 * (21/16) = 32 * (1 + 5/16)
+42 = (1 + 0x280000/(2^23)) * 2^5, so s=0, e=5, f=0x280000. 127 + 5 = 0x84.
+So 42 is represented by 0x84*2^23 + 0x280000 = 0x42280000.
+
+Encoded exponent 0 represents denormal numbers, and zero when f=0.
+Encoded exponent 255 represents infinity if f=0 and NaN (Not a Number) otherwise
+(+inf is 0x7f800000, -inf is 0xff800000, NaN is usually 0x7fc00000
+Normalized values have -127<e<128. The bounds of positive single-precision
+float values are 2^(-126)=1.18e-38 and (2-2^(-23))*2^127=3.4e38
+
+
+The double-precision format encodes numbers on 64 bits and uses:
+* 1 bit for the sign
+* 11 bits for the exponent, which is encoded relatively to -1023
+* 52 bits for the fraction (53 for the significant)
+
+For example 1 is encoded by 1023 * 2^52 = 0x3ff0000000000000.
+42 = 32 * (21/16) = 32 * (1 + 5/16) = (1 + 0x5000000000000/(2^52)) * 2^5
+So 42 is encoded by (5+1023)*2^52 + 0x5000000000000 = 0x4045000000000000
+
++inf is 0x7ff0000000000000, -inf 0xfff0000000000000, nan 0xfff8000000000000
+Normalized positive values are approximatively between 10^-308 and 10^308.
+
+
+Links:
+* https://en.wikipedia.org/wiki/Floating_point
+* https://en.wikipedia.org/wiki/IEEE_floating_point
+* https://en.wikipedia.org/wiki/Single-precision_floating-point_format
+* https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+
+@author: Nicolas Iooss
+@license: MIT
+"""
+import sys
+import argparse
+import struct
+import math
+import re
+import binascii
+import string
+import base64
+
+
+class B64Value:  # pylint: disable=too-few-public-methods
+    """Represent a value from an b64 text input"""
+    def __init__(self, b64val):
+        print('Input: base64')
+        self.value = base64.b64decode(b64val)
+        self.fraction = None
+        if len(self.value) not in [4, 8]:
+            raise ValueError('Inappropriate base64 number: {}'.format(b64val))
+
+
+class HexValue:  # pylint: disable=too-few-public-methods
+    """Represent a value from an hexadecimal text input"""
+    def __init__(self, hexval):
+        print('Input: hexadecimal')
+        hexval = hexval.lower()
+        self.value = binascii.unhexlify(hexval.encode())
+        self.fraction = None
+        if len(self.value) not in [4, 8]:
+            raise ValueError('Inappropriate hex number: {}'.format(hexval))
+
+
+class FloatValue:  # pylint: disable=too-few-public-methods
+    """Represent a value from a number text input"""
+    def __init__(self, value, typespec=None):
+        print('Input: float')
+        self.value = float(value)
+        self.typespec = typespec
+        if value in ('inf', '-inf', 'nan', '-nan'):
+            self.fraction = None
+        else:
+            re_m = re.compile(
+                r'[+\-]?(?P<int>0|[1-9]\d*)(\.(?P<frac>\d*))?([eE](?P<exp>[+\-]?\d+))?'
+            )
+            d = re_m.fullmatch(value).groupdict()  # pylint: disable=invalid-name
+
+            if d['frac'] is None:
+                d['frac'] = ''
+
+            if d['exp']:
+                self.fraction = int(d['int'] + d['frac']), int(d['exp']) - len(d['frac'])
+            else:
+                self.fraction = int(d['int'] + d['frac']), -len(d['frac'])
+
+
+def input_number(value):  # pylint: disable=too-many-return-statements
+    """Transform a string value to a float or an integer for hexadecimal"""
+    if value in ('inf', '-inf', 'nan', '-nan'):
+        return FloatValue(value)
+
+    if '.' in value:
+        if value[-1] == 'f':
+            # Specify float by hand
+            return FloatValue(value[:-1], 'f')
+        return FloatValue(value)
+
+    if value.startswith('0x'):
+        return HexValue(value[2:])
+
+    if any(c not in string.hexdigits for c in value):
+        # NB: for 4 or 8 bytes strings, b64 always end with = or ==
+        return B64Value(value.encode())
+
+    if all(c in string.digits for c in value):
+        return FloatValue(value)
+
+    return HexValue(value)
+
+
+def get_m_e(floatval, fraction, typespec):  # pylint: disable=too-many-locals
+    """Get mantissa and exponent."""
+    if not math.isfinite(floatval):
+        return None, None, None, None, None, None
+    exp = 53 if typespec == 'd' else 24
+    mantissa, exponent = math.frexp(floatval)
+    mantisse_bin = int(mantissa * pow(2, exp))
+    exposant_bin = exponent - exp
+    if mantisse_bin != mantissa * pow(2, exp):
+        raise RuntimeError
+    delta, delta_rel = 0, 0
+
+    if fraction:
+        mantisse_dec, exposant_dec = fraction
+        delta_denom = 1
+
+        delta_num_1 = mantisse_bin
+        delta_num_2 = mantisse_dec
+
+        if exposant_dec > 0:
+            delta_num_2 *= pow(10, exposant_dec)
+        else:
+            delta_num_1 *= pow(10, -exposant_dec)
+            delta_denom *= pow(10, -exposant_dec)
+
+        if exposant_bin > 0:
+            delta_num_1 *= pow(2, exposant_bin)
+        else:
+            delta_num_2 *= pow(2, -exposant_bin)
+            delta_denom *= pow(2, -exposant_bin)
+
+        delta_num = delta_num_1 - delta_num_2
+        delta = float(delta_num / delta_denom)
+        delta_rel = delta / floatval if delta != 0 else 0.
+
+    return mantissa, exponent, mantisse_bin, exposant_bin, delta, delta_rel
+
+
+def output_number_spec(little_number, fraction, spec):  # pylint: disable=too-many-locals
+    """Print misc output."""
+    if spec == 'f':
+        if len(little_number) != 4:
+            raise RuntimeError
+    elif spec == 'd':
+        if len(little_number) != 8:
+            raise RuntimeError
+    else:
+        raise RuntimeError
+    floatval = struct.unpack('<' + spec, little_number)[0]
+    big_number = bytes(reversed(little_number))
+
+    combi = {
+        'hex':
+            {
+                'little': '0x{}'.format(binascii.hexlify(little_number).decode().upper()),
+                'big': '0x{}'.format(binascii.hexlify(big_number).decode().upper())
+            },
+        'b64':
+            {
+                'little': base64.b64encode(little_number).decode(),
+                'big': base64.b64encode(big_number).decode()
+            }
+    }
+
+    mantissa, exponent, int_m, int_e, delta, delta_rel = get_m_e(floatval, fraction, spec)
+
+    fmt_spec = 'dbl' if spec == 'd' else 'flt'
+    print('{:<15} {}'.format(fmt_spec, floatval))
+    print('{:<15} {} * 2^{}'.format(fmt_spec, mantissa, exponent))
+    print(
+        '{:<15} {} * 2^{} (delta = {:.2e}, rel = {:.2e})'.format(
+            fmt_spec, int_m, int_e, delta, delta_rel
+        )
+    )
+
+    for fmt, arch_dict in sorted(combi.items()):
+        for arch, value in sorted(arch_dict.items()):
+            print('{:<3} {:<6} {:<3}  {}'.format(fmt_spec, arch, fmt, value))
+
+
+def output_number(le_bytes, fraction):
+    """Print misc output."""
+    if len(le_bytes) == 8:
+        try:
+            output_number_spec(le_bytes, fraction, 'd')
+            output_number_spec(struct.pack('<f', *struct.unpack('<d', le_bytes)), fraction, 'f')
+        except OverflowError:
+            print('Cannot pack double in float format')
+    elif len(le_bytes) == 4:
+        output_number_spec(struct.pack('<d', *struct.unpack('<f', le_bytes)), fraction, 'd')
+        output_number_spec(le_bytes, fraction, 'f')
+    print()
+
+
+def main(argv=None):
+    """Run."""
+    parser = argparse.ArgumentParser(description='Float number encoder')
+    parser.add_argument(
+        'numbers',
+        metavar='NUM',
+        nargs='+',
+        type=input_number,
+        help='number, in float format (with dot) or hex or b64'
+    )
+    parser.add_argument(
+        '-l',
+        '--little',
+        action='store_true',
+        help='Hexadecimal/base64 input in little endian (default)'
+    )
+    parser.add_argument(
+        '-b', '--big', action='store_true', help='Hexadecimal/base64 input in big endian'
+    )
+    parser.add_argument(
+        '-d',
+        '--double',
+        action='store_true',
+        help='Float input is double-precision (64 bits) (default)'
+    )
+    parser.add_argument(
+        '--64',
+        action='store_true',
+        dest='double',
+        help='Float input is double-precision (64 bits) (default)'
+    )
+    parser.add_argument(
+        '-f', '--float', action='store_true', help='Float input is single-precision (32 bits)'
+    )
+    parser.add_argument(
+        '--32',
+        action='store_true',
+        dest='float',
+        help='Float input is single-precision (32 bits)'
+    )
+
+    args = parser.parse_args(argv)
+
+    if args.little and args.big:
+        raise ValueError('Specify either --big or --little, but not both')
+
+    if not args.little and not args.big:
+        input_little = True
+    else:
+        input_little = args.little
+
+    if args.double and args.float:
+        raise ValueError('Specify either --big or --little, but not both')
+
+    # Enumerate all arguments
+    for num in args.numbers:
+        if isinstance(num, (HexValue, B64Value)):
+            le_bytes = num.value if input_little else bytes(reversed(num.value))
+        else:
+            if num.typespec == 'f':
+                if args.double:
+                    raise ValueError('Inconsistent precision specs')
+                typespec = 'f'
+            elif num.typespec == 'd':
+                if args.float:
+                    raise ValueError('Inconsistent precision specs')
+                typespec = 'd'
+            else:
+                typespec = 'f' if args.float else 'd'
+            le_bytes = struct.pack('<' + typespec, num.value)
+
+        output_number(le_bytes, num.fraction)
+
+
+if __name__ == '__main__':
+    sys.exit(main())
