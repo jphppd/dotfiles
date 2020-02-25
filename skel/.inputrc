@@ -38,8 +38,8 @@ $if mode=emacs
     # Add "sudo" in front of the line
     "\es": '\C-asudo \C-e'
     # grep
-    "\eg": '\C-a\C-kgrep -ri "" .\C-b\C-b\C-b'
-    "\eG": '\C-a\C-kgrep -r "" .\C-b\C-b\C-b'
+    "\eg": '\C-a\C-kggrep -ri "" .\C-b\C-b\C-b'
+    "\eG": '\C-a\C-kggrep -r "" .\C-b\C-b\C-b'
     # find
     "\ef": '\C-a\C-kfind . -iname "**"\C-b\C-b'
     "\eF": '\C-a\C-kfind . -name "**"\C-b\C-b'
