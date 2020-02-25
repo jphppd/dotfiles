@@ -26,7 +26,7 @@ Inspired by unxrandr code (from ARandR)
 @author: Nicolas Iooss
 @license: MIT
 """
-import optparse
+import argparse
 
 # Use ARandR screenlayout python library
 import screenlayout.auxiliary
@@ -52,7 +52,8 @@ def get_primary_width_name(xrandr):
 
 
 def main(argv=None):
-    parser = optparse.OptionParser(description=__doc__, usage='%prog')
+    """Run."""
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.parse_args(argv)
 
     xrandr = screenlayout.xrandr.XRandR()

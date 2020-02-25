@@ -337,6 +337,21 @@ repos:
     hooks:
       - id: script-must-have-extension
       - id: script-must-not-have-extension
+        exclude: >
+          (?x)^(
+            skel/.local/bin/asciitable|
+            skel/.local/bin/config-summary|
+            skel/.local/bin/chromium-incognito|
+            skel/.local/bin/debian-purge-packages|
+            skel/.local/bin/docker-purge|
+            skel/.local/bin/docker-update|
+            skel/.local/bin/dump-arch|
+            skel/.local/bin/luksfile|
+            skel/.local/bin/tab2space|
+            skel/.local/bin/who-is-here|
+            skel/.i3/set-sound
+          )$
+
       - id: shellcheck
       - id: shfmt
         args:
