@@ -5,14 +5,37 @@ SKEL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)/skel"
 rm --force "${SKEL_DIR}/skel.tar.gz"
 rm --force "${SKEL_DIR}/x_skel.tar.gz"
 
+extract_targz() {
+  local archive=$1
+  echo "Do you wish to unpack ${archive} in your home directory?"
+  select yn in "Yes" "No"; do
+    case "$yn" in
+      "Yes")
+        aunpack --extract-to="${HOME}" "${SKEL_DIR}/${archive}" >/dev/null
+        break
+        ;;
+      "No")
+        break
+        ;;
+      *)
+        echo "Please answer 1 or 2."
+        ;;
+    esac
+  done
+}
+
 pushd "${SKEL_DIR}" || exit
 
 skel_content=(.bash_login .bash_logout .bashrc)
 skel_content+=(.gitconfig)
 skel_content+=(.gdbinit .inputrc .tmux.conf .vimrc)
 skel_content+=(.local .ssh)
-apack "${SKEL_DIR}/skel.tar.gz" "${skel_content[@]}"
+echo 'Packing skel.tar.gz...'
+apack "${SKEL_DIR}/skel.tar.gz" "${skel_content[@]}" >/dev/null
+extract_targz 'skel.tar.gz'
 
 x_skel_content=(.xinitrc .Xresources)
 x_skel_content+=(.i3 .i3status.conf)
-apack "${SKEL_DIR}/x_skel.tar.gz" "${x_skel_content[@]}"
+echo 'Packing x_skel.tar.gz...'
+apack "${SKEL_DIR}/x_skel.tar.gz" "${x_skel_content[@]}" >/dev/null
+extract_targz 'x_skel.tar.gz'
