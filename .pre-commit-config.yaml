@@ -7,381 +7,60 @@
 #   pre-commit install
 
 repos:
-
-#######
-# Git #
-#######
-
-  - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 1.11.2
+  - repo: https://github.com/jphppd/pre-commit-hooks.git
+    rev: 0.0.5
     hooks:
-      - id: check-mailmap
-      - id: forbid-binary
-      - id: git-check  # Configure in .gitattributes
-      - id: git-dirty  # Configure in .gitignore
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
-    hooks:
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: forbid-new-submodules
-
-###########
-# Generic #
-###########
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
-    hooks:
-      - id: check-byte-order-marker
-      - id: check-case-conflict
-      - id: check-executables-have-shebangs
-      - id: check-symlinks
-      - id: check-vcs-permalinks
-      - id: detect-private-key
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.7
-    hooks:
-      - id: forbid-crlf
-      - id: remove-crlf
-      - id: forbid-tabs
-      - id: remove-tabs
-
-###########
-# Ansible #
-###########
-
-  - repo: https://github.com/ansible/ansible-lint.git
-    rev: v4.1.0
-    hooks:
-      - id: ansible-lint
-        files: roles/.*(yaml|yml)$
-
-#####
-# C #
-#####
-
-  - repo: local
-    hooks:
-      - id: clang-format
-        name: Run clang-format
-        entry: clang-format -i
-        args:
-          - "-style={ColumnLimit: 99}"
-        types: [text]
-        files: '\.(c|cpp|h|hpp)$'
-        language: system
-
-##############
-# Dockerfile #
-##############
-
-  - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
-    rev: v0.1.0
-    hooks:
-      - id: dockerfilelint
-        stages:
-          - commit
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
-    rev: v1.1.0
-    hooks:
-      - id: dockerfile_lint
-
-#######
-# Erb #
-#######
-
-  - repo: https://github.com/chriskuehl/puppet-pre-commit-hooks.git
-    rev: v2.1.0
-    hooks:
-      - id: erb-validate
-
-############
-# Html/css #
-############
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-java
-    rev: 1.3.9
-    hooks:
-      - id: validate-html
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
-    rev: v1.1.0
-    hooks:
-      - id: htmlhint
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-lxml
-    rev: v1.1.0
-    hooks:
-      - id: forbid-html-img-without-alt-text
-      - id: forbid-non-std-html-attributes
-      - id: detect-missing-css-classes
-        args:
-          - --css-files-dir
-          - .
-          - --html-files-dir
-          - .
-      - id: html-tags-blacklist
-      - id: html-attributes-blacklist
-
-##############
-# JavaScript #
-##############
-
-  - repo: https://github.com/pre-commit/mirrors-fixmyjs
-    rev: v2.0.0
-    hooks:
-      - id: fixmyjs
-        args:
-          - -l
-
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v6.8.0
-    hooks:
-      - id: eslint
-
-#########
-# Jinja #
-#########
-
-  - repo: https://github.com/motet-a/jinjalint
-    rev: master
-    hooks:
-      - id: jinjalint
-        types: [file]
-        files: \.(jinja|jinja2|j2)$
-
-########
-# Json #
-########
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
-    hooks:
-      - id: check-json
-      - id: pretty-format-json
-        args:
-          - --autofix
-          - --indent=2
-
-############
-# Makefile #
-############
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-go
-    rev: v1.0.1
-    hooks:
-      - id: checkmake
-
-############
-# Markdown #
-############
-
-  - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 1.11.2
-    hooks:
-      - id: markdownlint  # Configure in .mdlrc
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
-    rev: v1.1.0
-    hooks:
-      - id: markdown-toc
-
-########
-# Perl #
-########
-
-  - repo: https://github.com/henryykt/pre-commit-perl
-    rev: v0.0.4
-    hooks:
-      - id: perlcritic
-      - id: perltidy
-
-#######
-# Php #
-#######
-
-  - repo: https://github.com/digitalpulp/pre-commit-php.git
-    rev: 1.3.0
-    hooks:
-      - id: php-lint-all
-      - id: php-lint
-      - id: php-unit
-      - id: php-cs
-        args:
-          - --standard=PSR1 -p
-      - id: php-cbf
-        args:
-          - --standard=PSR1 -p
-      - id: php-cs-fixer
-
-##########
-# Puppet #
-##########
-
-  - repo: https://github.com/pre-commit/mirrors-puppet-lint
-    rev: v2.4.2
-    hooks:
-      - id: puppet-lint
-
-  - repo: https://github.com/chriskuehl/puppet-pre-commit-hooks.git
-    rev: v2.1.0
-    hooks:
-      - id: puppet-validate
-      - id: epp-validate
-      - id: puppet-lint
-        args:
-          - --fail-on-warnings
-
-####################
-# Python Formatter #
-####################
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
-    hooks:
-      - id: check-ast
-      - id: check-builtin-literals
-      - id: check-docstring-first
-      - id: debug-statements
-      - id: double-quote-string-fixer
-      - id: fix-encoding-pragma
-        args:
-          - --remove
-      - id: requirements-txt-fixer
-
-  - repo: https://github.com/pre-commit/mirrors-yapf
-    rev: v0.29.0
-    hooks:
-      - id: yapf
-        args:
-          - --in-place
-          - '--style={based_on_style: facebook, COLUMN_LIMIT=99}'
-
-#################
-# Python Linter #
-#################
-
-  - repo: https://github.com/PyCQA/pylint.git
-    rev: pylint-2.4.4
-    hooks:
-      - id: pylint
-        args:
-          - --max-line-length=99
-          - --min-similarity-lines=50
-          - --enable=all
-          - --disable=locally-disabled
-          - --disable=suppressed-message
-          - --disable=import-error
-          - --disable=c-extension-no-member
-          - --disable=fixme
-          - --disable=bad-continuation
-
-  - repo: https://github.com/PyCQA/pydocstyle.git
-    rev: 5.0.2
-    hooks:
-      - id: pydocstyle
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.1.0
-    hooks:
-      - id: python-safety-dependencies-check
-
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.6.2
-    hooks:
-      - id: bandit
-
-########
-# Ruby #
-########
-
-  - repo: https://github.com/pre-commit/mirrors-ruby-lint
-    rev: v2.3.1
-    hooks:
-      - id: ruby-lint
-
-  - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 1.11.2
-    hooks:
-      - id: bundler-audit
-      - id: fasterer
-      - id: reek
-      - id: rubocop
-
-#######
-# Rst #
-#######
-
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-markup
-    rev: v1.0.0
-    hooks:
+      - id: git-check-mailmap
+      - id: git-forbid-binary
+      - id: git-check
+      - id: git-dirty
+      - id: git-check-added-large-files
+      - id: git-check-merge-conflict
+      - id: git-commit-msg
+      - id: generic-check-byte-order-marker
+      - id: generic-check-case-conflict
+      - id: generic-check-executables-have-shebangs
+      - id: generic-check-symlinks
+      - id: generic-check-vcs-permalinks
+      - id: generic-detect-private-key
+      - id: generic-end-of-file-fixer
+      - id: generic-trailing-whitespace
+      - id: generic-crlf-forbid
+      - id: generic-crlf-remove
+      - id: generic-tabs-forbid
+      - id: generic-tabs-remove
+      - id: generic-nbsp-forbid
+      - id: generic-nbsp-remove
+      - id: generic-en-dashes-forbid
+      - id: generic-en-dashes-remove
+      - id: jinja-lint
+      - id: json-check-syntax
+      - id: json-pretty-format
+      - id: markdown-lint
+      - id: perl-critic
+      - id: perl-tidy
+      - id: python-check-ast
+      - id: python-check-builtin-literals
+      - id: python-check-docstring-first
+      - id: python-debug-statements
+      - id: python-double-quote-string-fixer
+      - id: python-fix-encoding-pragma
+      - id: python-requirements-txt-fixer
+      - id: python-safetydb
+      - id: python-pyupgrade
+      - id: python-black
+      - id: python-pylint-config
+      - id: python-pylint
+      - id: python-pydocstyle
+      - id: python-bandit
       - id: rst-linter
-
-#########
-# Shell #
-#########
-
-# shfmt:
-# apt-get install --yes golang
-# GOPATH=~/.go go get -u mvdan.cc/sh/cmd/shfmt
-# cp ~/.go/bin/shfmt ~/.local/bin
-
-  - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 1.11.2
-    hooks:
-      - id: script-must-have-extension
-      - id: script-must-not-have-extension
-        exclude: >
-          (?x)^(
-            skel/.local/bin/asciitable|
-            skel/.local/bin/config-summary|
-            skel/.local/bin/chromium-incognito|
-            skel/.local/bin/debian-purge-packages|
-            skel/.local/bin/docker-purge|
-            skel/.local/bin/docker-update|
-            skel/.local/bin/dump-arch|
-            skel/.local/bin/luksfile|
-            skel/.local/bin/tab2space|
-            skel/.local/bin/who-is-here|
-            skel/.i3/set-sound
-          )$
-
-      - id: shellcheck
-      - id: shfmt
-        args:
-          - -l
-          - -i 2
-          - -ci
-          - -w
-
-#######
-# Xml #
-#######
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
-    hooks:
-      - id: check-xml
-
-########
-# Yaml #
-########
-
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.20.0
-    hooks:
-      - id: yamllint
-        args:
-          - "-d {rules: {line-length: {max: 99}}}"
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.5.0
-    hooks:
-      - id: check-yaml
-      - id: sort-simple-yaml
+      - id: shell-check-syntax
+      - id: shell-check
+      - id: shell-script-must-have-extension
+      - id: shell-script-must-not-have-extension
+      - id: shell-bashate
+      - id: shell-beautysh
+      - id: toml-check-syntax
+      - id: xml-check-syntax
+      - id: yaml-check-syntax
+      - id: yaml-yamllint
