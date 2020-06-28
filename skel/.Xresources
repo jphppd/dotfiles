@@ -114,7 +114,7 @@ URxvt.font:                 xft:DejaVu Sans Mono:size=12
 *color15: Color_white
 
 ! Fade text n% upon unfocus
-URxvt.fading: 30
+URxvt.fading: 20
 
 !scroll
 urxvt*scrollBar :           false

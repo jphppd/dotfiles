@@ -29,10 +29,8 @@ fi
 
 if should_run_display; then
   if [ -x /usr/local/bin/sway ]; then
-    /usr/local/bin/sway
-    exit $?
+    exec /usr/local/bin/sway
   else
-    /usr/bin/startx
-    exit $?
+    exec /usr/bin/startx
   fi
 fi

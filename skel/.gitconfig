@@ -42,6 +42,7 @@
 [core]
     excludesFile = ~/.local/lib/git/ignore
     pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
+    autocrlf = input
 
 [include]
     path = ~/.local/lib/git/credentials
