@@ -35,8 +35,7 @@ apack "${SKEL_DIR}/skel.tar.gz" "${skel_content[@]}" >/dev/null
 extract_targz 'skel.tar.gz'
 
 x_skel_content=(.xinitrc .Xresources)
-x_skel_content+=(.i3 .i3status.conf)
-x_skel_content+=(.config)
+x_skel_content+=(.i3status.conf .config)
 echo 'Packing x_skel.tar.gz...'
 apack "${SKEL_DIR}/x_skel.tar.gz" "${x_skel_content[@]}" >/dev/null
 extract_targz 'x_skel.tar.gz'

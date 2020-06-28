@@ -152,12 +152,12 @@ client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 exec /usr/bin/urxvtd -q -f -o
 exec /usr/bin/xrdb ~/.Xresources
 
-bindsym XF86AudioMute         exec --no-startup-id "/home/jpdugard/.i3/sound.sh set-sink-mute toggle"
-bindsym XF86AudioLowerVolume  exec --no-startup-id "/home/jpdugard/.i3/sound.sh set-sink-volume -10%"
-bindsym XF86AudioRaiseVolume  exec --no-startup-id "/home/jpdugard/.i3/sound.sh set-sink-volume +10%"
+bindsym XF86AudioMute         exec --no-startup-id pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} pactl set-sink-mute   {} toggle
+bindsym XF86AudioLowerVolume  exec --no-startup-id pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} pactl set-sink-volume {} -10%
+bindsym XF86AudioRaiseVolume  exec --no-startup-id pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} pactl set-sink-volume {} +10%
 
-bindsym XF86MonBrightnessDown exec --no-startup-id "sudo brightnessctl set 5%-"
-bindsym XF86MonBrightnessUp   exec --no-startup-id "sudo brightnessctl set 5%+"
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+bindsym XF86MonBrightnessUp   exec --no-startup-id brightnessctl set 5%+
 
 bindsym $mod+q  exec pcmanfm
 bindsym $mod+b  exec /usr/bin/xdg-open http://www.google.fr

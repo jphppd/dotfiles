@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-/usr/bin/pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} /usr/bin/pactl "$1" {} "$2"
