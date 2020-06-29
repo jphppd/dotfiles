@@ -110,3 +110,7 @@ if [ -n "${LD_LIBRARY_PATH}" ]; then
 fi
 
 export JAVA_TOOL_OPTIONS='-Dawt.useSystemAAFontSettings=gasp'
+
+if ! [ -z "${WAYLAND_DISPLAY}" ]; then
+  export _JAVA_AWT_WM_NONREPARENTING=1
+fi
