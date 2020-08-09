@@ -5,42 +5,44 @@ export PROMPT_COMMAND=__prompt_command
 
 __prompt_command() {
   local exit_code="$?" # This needs to be first
+  local dollar="\\\$"
 
-  local reset='\[\e[0m\]'
-  local bold='\[\e[1m\]'
-  local red='\[\e[31m\]'
-  local green='\[\e[32m\]'
-  local yellow='\[\e[33m\]'
-  local blue='\[\e[34m\]'
-  local magenta='\[\e[35m\]'
-  local cyan='\[\e[36m\]'
-  local lightred='\[\e[91m\]'
-  local lightcyan='\[\e[96m\]'
+  local reset='\[$(tput sgr0)\]'
+  local bold='\[$(tput bold)\]'
+  local red='\[$(tput setaf 1)\]'
+  local green='\[$(tput setaf 2)\]'
+  local yellow='\[$(tput setaf 3)\]'
+  local blue='\[$(tput setaf 4)\]'
+  local magenta='\[$(tput setaf 5)\]'
+  local cyan='\[$(tput setaf 6)\]'
+  local lightred='\[$(tput setaf 9)\]'
+  local lightcyan='\[$(tput setaf 14)\]'
 
-  local exit_status=""
-  local user=""
-  local host=""
-  local dir=""
-  local git=""
-  local dollar=""
-  local venv=""
+  local exit_status="\[\]"
+  local user="\[\]"
+  local host="\[\]"
+  local dir="\[\]"
+  local git="\[\]"
+  local venv="\[\]"
+  local term_title="\[\]"
+  local ps1=""
 
-  if [ "$exit_code" != 0 ]; then
-    exit_status="[${bold}${lightred}${exit_code}${reset}]"
+  if [ "${exit_code}" != 0 ]; then
+    exit_status="[${bold}${red}${exit_code}${reset}]"
   else
     exit_status="[${green}${exit_code}${reset}]"
   fi
 
-  if [ "$(id -u)" -eq 0 ]; then
+  if [ "$(id --user)" -eq 0 ]; then
     user="${bold}${red}\u${reset}"
   else
     user="${blue}\u${reset}"
   fi
 
-  if [ -z "$SSH_CLIENT" ]; then
+  if [ -z "${SSH_CLIENT}" ]; then
     host="${cyan}\h${reset}"
   else
-    if [ -z "$SSH_AUTH_SOCK" ]; then
+    if [ -z "${SSH_AUTH_SOCK}" ]; then
       host="${lightcyan}\h${reset}"
     else
       host="${lightcyan}\h(*)${reset}"
@@ -48,7 +50,6 @@ __prompt_command() {
   fi
 
   dir="${magenta}\w${reset} "
-  dollar="\\\$ "
 
   # GIT
   if command -v git >/dev/null && command -v __git_ps1 >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
@@ -66,14 +67,17 @@ __prompt_command() {
   fi
 
   # Concatenation des elements
-  PS1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}${dollar}"
+  ps1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}"
+  trailing_sep="${dollar} "
 
   # Set the title to user@host:dir
   case "$TERM" in
     xterm* | rxvt*)
-      PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+      term_title="\[\e]0;\u@\h: \w\a\]"
       ;;
   esac
+
+  PS1="${term_title}${ps1}${trailing_sep}"
 }
 
 export GIT_PS1_SHOWUNTRACKEDFILES=1
