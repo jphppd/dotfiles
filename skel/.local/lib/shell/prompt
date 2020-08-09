@@ -3,6 +3,16 @@
 
 export PROMPT_COMMAND=__prompt_command
 
+__prompt_width(){
+  local stripped_ps1
+  local stripped_expanded_ps1
+
+  # Remove \[...\] with non-greedy *? operator
+  stripped_ps1="$(echo -n "$1" | perl -pe 's|\\\[.*?\\\]||g')"
+  stripped_expanded_ps1="${stripped_ps1@P}"
+  echo -n "${#stripped_expanded_ps1}"
+}
+
 __prompt_command() {
   local exit_code="$?" # This needs to be first
   local dollar="\\\$"
@@ -25,6 +35,7 @@ __prompt_command() {
   local git="\[\]"
   local venv="\[\]"
   local term_title="\[\]"
+  local trailing_sep=""
   local ps1=""
 
   if [ "${exit_code}" != 0 ]; then
@@ -68,7 +79,18 @@ __prompt_command() {
 
   # Concatenation des elements
   ps1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}"
-  trailing_sep="${dollar} "
+
+  # Newline if ps1 is too long with respect to term width
+  local prompt_width
+  local term_width
+  prompt_width="$(__prompt_width "${ps1}")"
+  term_width="$(tput cols)"
+
+  if (( "${prompt_width}" + 20 > "${term_width}" )); then
+    trailing_sep="\n${dollar} "
+  else
+    trailing_sep="${dollar} "
+  fi
 
   # Set the title to user@host:dir
   case "$TERM" in
