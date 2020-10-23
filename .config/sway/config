@@ -5,7 +5,12 @@ input type:keyboard {
     xkb_variant oss
 }
 
-output * bg /home/jpdugard/scripts/wallpaper/desktop_wallpaper fill
+input type:touchpad {
+    pointer_accel 0.55
+    accel_profile adaptive
+}
+
+output * bg "${HOME}/.wallpaper" fill
 
 gaps outer 0
 gaps inner 5
@@ -16,14 +21,15 @@ set $mod Mod4
 
 font pango:DejaVu Sans Mono 9
 #font pango:Inconsolata Bold 10
-#font pango:Lucide MAC Bold 10
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return       exec "/usr/bin/urxvtc"
-bindsym $mod+Shift+Return exec "/usr/bin/urxvtc -e ranger"
+# bindsym $mod+Return       exec "/usr/bin/urxvtc"
+# bindsym $mod+Shift+Return exec "/usr/bin/urxvtc -e ranger"
+bindsym $mod+Return       exec "alacritty"
+bindsym $mod+Shift+Return exec "alacritty -e ranger"
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -149,15 +155,15 @@ client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 # Perso
 # =====
 
-exec /usr/bin/urxvtd -q -f -o
-exec /usr/bin/xrdb ~/.Xresources
+# exec /usr/bin/urxvtd -q -f -o
+# exec /usr/bin/xrdb ~/.Xresources
 
 bindsym XF86AudioMute         exec --no-startup-id pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} pactl set-sink-mute   {} toggle
 bindsym XF86AudioLowerVolume  exec --no-startup-id pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} pactl set-sink-volume {} -10%
 bindsym XF86AudioRaiseVolume  exec --no-startup-id pacmd list-sinks | tr -d '*' | awk '/index/ {print $2}' | xargs -I{} pactl set-sink-volume {} +10%
 
-bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
-bindsym XF86MonBrightnessUp   exec --no-startup-id brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5-
+bindsym XF86MonBrightnessUp   exec --no-startup-id brightnessctl set 5+
 
 bindsym $mod+q  exec pcmanfm
 bindsym $mod+b  exec /usr/bin/xdg-open http://www.google.fr
@@ -166,20 +172,20 @@ bindsym $mod+l  exec i3lock --color=00356b --show-failed-attempts
 bindsym $mod+m move scratchpad
 bindsym $mod+o scratchpad show
 
-#set $monitor1 eDP1
-#set $monitor2 HDMI1
-#set $monitor3 DP1
+# set $monitor1 eDP1
+# set $monitor2 HDMI1
+# set $monitor3 DP1
 #
-#output $monitor1 resolution 1920x1080 position 0,0
-#output $monitor2 resolution 1920x1080 position 1920,0
-#output $monitor3 resolution 1920x1080 position 3840,0
+# output $monitor1 resolution 1920x1080 position 0,0
+# output $monitor2 resolution 1920x1080 position 1920,0
+# output $monitor3 resolution 1920x1080 position 3840,0
 #
-#workspace 1 output $monitor1
-#workspace 2 output $monitor1
-#workspace 3 output $monitor1
-#workspace 4 output $monitor2
-#workspace 5 output $monitor2
-#workspace 6 output $monitor2
-#workspace 7 output $monitor3
-#workspace 8 output $monitor3
-#workspace 9 output $monitor3
+# workspace 1 output $monitor1
+# workspace 2 output $monitor1
+# workspace 3 output $monitor1
+# workspace 4 output $monitor2
+# workspace 5 output $monitor2
+# workspace 6 output $monitor2
+# workspace 7 output $monitor3
+# workspace 8 output $monitor3
+# workspace 9 output $monitor3

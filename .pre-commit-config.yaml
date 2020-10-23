@@ -8,9 +8,8 @@
 
 repos:
   - repo: https://github.com/jphppd/pre-commit-hooks.git
-    rev: 0.0.8
+    rev: 0.0.10
     hooks:
-      - id: git-check-mailmap
       - id: git-forbid-binary
       - id: git-check
       - id: git-dirty
