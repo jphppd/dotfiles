@@ -94,7 +94,7 @@ __prompt_command() {
 
   # Set the title to user@host:dir
   case "$TERM" in
-    xterm* | rxvt*)
+    xterm* | rxvt* | alacritty* )
       term_title="\[\e]0;\u@\h: \w\a\]"
       ;;
   esac

@@ -74,7 +74,6 @@ if has('gui_running')
   map! <S-Insert> <MiddleMouse>
 endif
 
-
 " Don't eval modelines by default. See Gentoo bugs #14088 and #73715.
 set modelines=0
 set nomodeline
@@ -199,6 +198,12 @@ if &term ==? "xterm"
   set t_Sb=^[4%dm
   set t_Sf=^[3%dm
   set ttymouse=xterm2
+endif
+
+if &term ==? "alacritty"
+  set t_Sb=^[4%dm
+  set t_Sf=^[3%dm
+  set ttymouse=sgr
 endif
 
 if &term ==? "gnome" && has("eval")

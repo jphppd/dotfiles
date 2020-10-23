@@ -8,7 +8,6 @@ should_kill_ssh_agent() {
   [[ -x /usr/bin/ssh-agent ]] &&
     [[ -n "${SSH_AGENT_PID}" ]] &&
     [[ -z "${TMUX}" ]]
-  return $?
 }
 
 if should_kill_ssh_agent; then

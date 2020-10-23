@@ -21,6 +21,6 @@ if [ -x /usr/bin/xautolock ]; then
   /usr/bin/xautolock -time 30 -locker "systemctl suspend" &
 fi
 
-if [ ! -x /usr/local/bin/sway ] && [ -x /usr/bin/i3 ]; then
+if [ -x /usr/bin/i3 ]; then
   exec /usr/bin/i3
 fi

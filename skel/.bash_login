@@ -5,18 +5,15 @@
 #
 
 should_launch_ssh_agent() {
-  [[ -x /usr/bin/ssh-agent ]] &&
-    [[ -z "${SSH_TTY}" ]] &&
-    [[ -z "${SSH_AGENT_PID}" ]]
-  return $?
+  [[ -x /usr/bin/ssh-agent ]] && [[ -z "${SSH_AGENT_PID}" ]] && [[ -z "${SSH_TTY}" ]]
 }
 
 should_run_display() {
-  [[ "$UID" -ne 0 ]] &&
-    [[ -z $DISPLAY ]] &&
-    [[ -x /usr/bin/startx ]] &&
-    [[ $(tty) == "/dev/tty1" ]]
-  return $?
+  if [[ "$UID" -ne 0 ]] && [[ -z $DISPLAY ]] && [[ $(tty) == "/dev/tty1" ]]; then
+    [[ -x /usr/bin/startx ]] || [[ -x /usr/local/bin/sway ]]
+  else
+    false
+  fi
 }
 
 if [[ -f "${HOME}/.bashrc" ]] && [[ "$-" == *i* ]]; then
@@ -28,7 +25,7 @@ if should_launch_ssh_agent; then
 fi
 
 if should_run_display; then
-  if [ -x /usr/local/bin/sway ]; then
+  if [[ -x /usr/local/bin/sway ]]; then
     exec /usr/local/bin/sway
   else
     exec /usr/bin/startx
