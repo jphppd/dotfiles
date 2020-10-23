@@ -73,18 +73,19 @@ Links:
 @author: Nicolas Iooss
 @license: MIT
 """
-import sys
 import argparse
-import struct
+import base64
+import binascii
 import math
 import re
-import binascii
 import string
-import base64
+import struct
+import sys
 
 
 class B64Value:  # pylint: disable=too-few-public-methods
     """Represent a value from an b64 text input"""
+
     def __init__(self, b64val):
         print('Input: base64')
         self.value = base64.b64decode(b64val)
@@ -95,6 +96,7 @@ class B64Value:  # pylint: disable=too-few-public-methods
 
 class HexValue:  # pylint: disable=too-few-public-methods
     """Represent a value from an hexadecimal text input"""
+
     def __init__(self, hexval):
         print('Input: hexadecimal')
         hexval = hexval.lower()
@@ -106,6 +108,7 @@ class HexValue:  # pylint: disable=too-few-public-methods
 
 class FloatValue:  # pylint: disable=too-few-public-methods
     """Represent a value from a number text input"""
+
     def __init__(self, value, typespec=None):
         print('Input: float')
         self.value = float(value)
@@ -184,7 +187,7 @@ def get_m_e(floatval, fraction, typespec):  # pylint: disable=too-many-locals
 
         delta_num = delta_num_1 - delta_num_2
         delta = float(delta_num / delta_denom)
-        delta_rel = delta / floatval if delta != 0 else 0.
+        delta_rel = delta / floatval if delta != 0 else 0.0
 
     return mantissa, exponent, mantisse_bin, exposant_bin, delta, delta_rel
 
@@ -203,16 +206,14 @@ def output_number_spec(little_number, fraction, spec):  # pylint: disable=too-ma
     big_number = bytes(reversed(little_number))
 
     combi = {
-        'hex':
-            {
-                'little': '0x{}'.format(binascii.hexlify(little_number).decode().upper()),
-                'big': '0x{}'.format(binascii.hexlify(big_number).decode().upper())
-            },
-        'b64':
-            {
-                'little': base64.b64encode(little_number).decode(),
-                'big': base64.b64encode(big_number).decode()
-            }
+        'hex': {
+            'little': '0x{}'.format(binascii.hexlify(little_number).decode().upper()),
+            'big': '0x{}'.format(binascii.hexlify(big_number).decode().upper()),
+        },
+        'b64': {
+            'little': base64.b64encode(little_number).decode(),
+            'big': base64.b64encode(big_number).decode(),
+        },
     }
 
     mantissa, exponent, int_m, int_e, delta, delta_rel = get_m_e(floatval, fraction, spec)
@@ -253,13 +254,13 @@ def main(argv=None):
         metavar='NUM',
         nargs='+',
         type=input_number,
-        help='number, in float format (with dot) or hex or b64'
+        help='number, in float format (with dot) or hex or b64',
     )
     parser.add_argument(
         '-l',
         '--little',
         action='store_true',
-        help='Hexadecimal/base64 input in little endian (default)'
+        help='Hexadecimal/base64 input in little endian (default)',
     )
     parser.add_argument(
         '-b', '--big', action='store_true', help='Hexadecimal/base64 input in big endian'
@@ -268,22 +269,19 @@ def main(argv=None):
         '-d',
         '--double',
         action='store_true',
-        help='Float input is double-precision (64 bits) (default)'
+        help='Float input is double-precision (64 bits) (default)',
     )
     parser.add_argument(
         '--64',
         action='store_true',
         dest='double',
-        help='Float input is double-precision (64 bits) (default)'
+        help='Float input is double-precision (64 bits) (default)',
     )
     parser.add_argument(
         '-f', '--float', action='store_true', help='Float input is single-precision (32 bits)'
     )
     parser.add_argument(
-        '--32',
-        action='store_true',
-        dest='float',
-        help='Float input is single-precision (32 bits)'
+        '--32', action='store_true', dest='float', help='Float input is single-precision (32 bits)'
     )
 
     args = parser.parse_args(argv)

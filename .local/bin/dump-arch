@@ -21,24 +21,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# Purge the config files of removed packages on a Debian system
+# Dump available arichitecture information
 
-# Use aptitude or apt-get
-if command -v aptitude >/dev/null; then
-  APT=aptitude
-elif command -v apt-get >/dev/null; then
-  APT=apt-get
-else
-  echo >&2 'Unable to find aptitude nor apt-get :('
-  exit 1
+echo "uname: machine $(uname -m), kernel $(uname -s -r), OS $(uname -o)"
+
+if [ -x /usr/bin/dpkg ] || command -v dpkg >/dev/null 2>&1; then
+    # "dpkg-architecture -qDEB_HOST_ARCH" calls "dpkg --print-architecture"
+    echo "dpkg architecture: $(dpkg --print-architecture)"
 fi
 
-PKGLIST=$(dpkg -l | sed -n 's/^rc \+\([^ ]\+\).*$/\1/p')
-[ -n "$PKGLIST" ] || exit 0
-
-echo "These packages will be removed:" "${PKGLIST}"
-if [ "$(id -u)" = "0" ]; then
-  exec "$APT" purge "${PKGLIST}"
-else
-  exec sudo "$APT" purge "${PKGLIST}"
+if [ -x /usr/bin/gcc ] || command -v gcc >/dev/null 2>&1; then
+    echo "gcc target triple: $(gcc -dumpmachine)"
+    GCC_FLAGS="$(gcc -march=native -E -v - </dev/null 2>&1 >/dev/null |
+    sed -n 's/ /  /g;s/ -[Ev]\? / /g;s/  */ /g;s/^ *.*cc1 \(.*\)$/\1/p')"
+    echo "gcc -march=native flags: $GCC_FLAGS"
 fi

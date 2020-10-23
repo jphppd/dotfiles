@@ -53,57 +53,57 @@ echo "$COLOR_BLUE$(
 # Nicify "w"
 LINE_SEDCMD=''
 w | sed '1{/ up /d}' | while IFS= read -r LINE; do
-  if [ -z "$LINE_SEDCMD" ]; then
-    # Build a sed command to reformat the fields of the line,
-    # accordingly to the header
-    LINE_SEDCMD='s/'
-    LINE_SEDCMD_REPL=''
-    CUR_PAT_IDX=1
-    # As zsh does not split strings around spaces, write compatible code
-    # with shell variable mangling
-    HEADER_LINE="$LINE"
-    while [ -n "$HEADER_LINE" ]; do
-      COLUMN="${HEADER_LINE%% *}"
-      HEADER_LINE="$(echo "$HEADER_LINE" | sed 's/^\S\+\s*//')"
-      case "$COLUMN" in
-        USER)
-          LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
-          LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_YELLOW\\$CUR_PAT_IDX"
-          CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
-          ;;
-        TTY)
-          LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
-          LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_PURPLE\\$CUR_PAT_IDX"
-          CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
-          ;;
-        FROM)
-          LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
-          LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_CYAN\\$CUR_PAT_IDX"
-          CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
-          ;;
-        LOGIN@)
-          LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
-          LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_GREEN\\$CUR_PAT_IDX"
-          CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
-          ;;
-        WHAT)
-          LINE_SEDCMD="$LINE_SEDCMD\\(.*\\)"
-          LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_GRAY\\$CUR_PAT_IDX"
-          HEADER_LINE=''
-          ;;
-        IDLE | JCPU | PCPU)
-          LINE_SEDCMD="$LINE_SEDCMD\\S\\+\\s*"
-          ;;
-        *)
-          echo >&2 "Unknown column $COLUMN in w output"
-          LINE_SEDCMD="$LINE_SEDCMD\\S\\+\\s*"
-          ;;
-      esac
-    done
-    # Highlight root too
-    LINE_SEDCMD="$LINE_SEDCMD.*/$LINE_SEDCMD_REPL/;s/\\(root\\)/$COLOR_BOLDRED\\1$COLOR_BOLD/g"
-  fi
-  echo "$LINE$COLOR_NORM" | sed "$LINE_SEDCMD"
+    if [ -z "$LINE_SEDCMD" ]; then
+        # Build a sed command to reformat the fields of the line,
+        # accordingly to the header
+        LINE_SEDCMD='s/'
+        LINE_SEDCMD_REPL=''
+        CUR_PAT_IDX=1
+        # As zsh does not split strings around spaces, write compatible code
+        # with shell variable mangling
+        HEADER_LINE="$LINE"
+        while [ -n "$HEADER_LINE" ]; do
+            COLUMN="${HEADER_LINE%% *}"
+            HEADER_LINE="$(echo "$HEADER_LINE" | sed 's/^\S\+\s*//')"
+            case "$COLUMN" in
+                USER)
+                    LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
+                    LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_YELLOW\\$CUR_PAT_IDX"
+                    CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
+                    ;;
+                TTY)
+                    LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
+                    LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_PURPLE\\$CUR_PAT_IDX"
+                    CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
+                    ;;
+                FROM)
+                    LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
+                    LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_CYAN\\$CUR_PAT_IDX"
+                    CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
+                    ;;
+                LOGIN@)
+                    LINE_SEDCMD="$LINE_SEDCMD\\(\\S\\+\\s*\\)"
+                    LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_GREEN\\$CUR_PAT_IDX"
+                    CUR_PAT_IDX=$((CUR_PAT_IDX + 1))
+                    ;;
+                WHAT)
+                    LINE_SEDCMD="$LINE_SEDCMD\\(.*\\)"
+                    LINE_SEDCMD_REPL="$LINE_SEDCMD_REPL$COLOR_GRAY\\$CUR_PAT_IDX"
+                    HEADER_LINE=''
+                    ;;
+                IDLE | JCPU | PCPU)
+                    LINE_SEDCMD="$LINE_SEDCMD\\S\\+\\s*"
+                    ;;
+                *)
+                    echo >&2 "Unknown column $COLUMN in w output"
+                    LINE_SEDCMD="$LINE_SEDCMD\\S\\+\\s*"
+                    ;;
+            esac
+        done
+        # Highlight root too
+        LINE_SEDCMD="$LINE_SEDCMD.*/$LINE_SEDCMD_REPL/;s/\\(root\\)/$COLOR_BOLDRED\\1$COLOR_BOLD/g"
+    fi
+    echo "$LINE$COLOR_NORM" | sed "$LINE_SEDCMD"
 done
 printf '%s' "$COLOR_NORM"
 

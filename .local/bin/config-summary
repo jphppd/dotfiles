@@ -1,0 +1,409 @@
+#!/bin/sh
+# SPDX-License-Identifier: MIT
+#
+# Copyright (c) 2015-2018 Nicolas Iooss
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# Build a configuration summary of the currently running system
+# Output a file in ReStructuredText format.
+#
+# Similar project:
+# * dracut rdosreport tool:
+#   https://git.kernel.org/cgit/boot/dracut/dracut.git/tree/modules.d/99base/rdsosreport.sh
+
+has_command() {
+    [ -x "/usr/bin/$1" ] || command -v "$1" >/dev/null 2>&1
+}
+
+# If fmt is not found, replace with a simple cat
+if ! has_command fmt; then
+    fmt() {
+        cat
+    }
+fi
+
+# Copy the input with adding one level of indentation in the output, and
+# blank lines before and after.
+# Optional parameter: indentation to use (4 spaces by default)
+indent_out() {
+    echo ''
+    # Detect a lack of output to avoid leaving a code block empty
+    (grep '' || echo '[No output]') | sed "s/^/${1:-    }/"
+    echo ''
+}
+
+echo 'General information'
+echo '-------------------'
+echo ''
+echo '::'
+echo ''
+echo '    $ uname -a'
+echo "    $(uname -a)"
+if [ -r /proc/sys/kernel/hostname ]; then
+    echo '    $ cat /proc/sys/kernel/hostname'
+    echo "    $(cat /proc/sys/kernel/hostname)"
+fi
+if [ -r /proc/device-tree/model ]; then
+    echo '    $ cat /proc/device-tree/model'
+    echo "    $(cat /proc/device-tree/model)"
+fi
+if has_command dkpg; then
+    echo '    $ dpkg --print-architecture'
+    echo "    $(dpkg --print-architecture)"
+fi
+if has_command gcc; then
+    echo '    $ gcc -dumpmachine'
+    echo "    $(gcc -dumpmachine 2>&1)"
+fi
+if has_command clang; then
+    echo '    $ clang -dumpmachine'
+    echo "    $(clang -dumpmachine 2>&1)"
+fi
+
+echo ''
+echo 'Hardware information'
+echo '--------------------'
+echo ''
+for LSCMD in lshw lscpu lspci lsusb hwloc-ls; do
+    if has_command "$LSCMD"; then
+        echo "* $LSCMD::"
+        "$LSCMD" 2>&1 | indent_out
+    else
+        echo "* $LSCMD command not found."
+    fi
+done
+if [ -r /proc/cpuinfo ]; then
+    echo '* /proc/cpuinfo::'
+    indent_out </proc/cpuinfo
+fi
+# DMI information: bios_vendor, board_vendor, chassis_vendor, sys_vendor
+for FILE in /sys/class/dmi/id/*_vendor /sys/class/dmi/id/uevent; do
+    if [ -r "$FILE" ]; then
+        echo "* $FILE: $(cat "$FILE")"
+    fi
+done
+
+echo ''
+echo 'Network information'
+echo '-------------------'
+echo ''
+if has_command ip; then
+    # Linux with iproute programs
+    echo '* ip address::'
+    ip address 2>&1 | indent_out
+    echo '* ip -4 route list table all::'
+    ip -4 route list table all 2>&1 | indent_out
+    echo '* ip -6 route list table all::'
+    ip -6 route list table all 2>&1 | indent_out
+    echo '* ip -4 rule::'
+    ip -4 rule 2>&1 | indent_out
+    echo '* ip -6 rule::'
+    ip -6 rule 2>&1 | indent_out
+elif has_command ifconfig && has_command route; then
+    # UN*X with net-tools programs
+    echo '* ifconfig -a::'
+    ifconfig -a 2>&1 | indent_out
+    echo '* route -4 -n::'
+    route -n 2>&1 | indent_out
+    echo '* route -6 -n::'
+    route -6 -n 2>&1 | indent_out
+elif has_command ipconfig && has_command route; then
+    # Windows
+    echo '* ipconfig::'
+    ipconfig 2>&1 | indent_out
+    echo '* ipconfig /all::'
+    ipconfig /all 2>&1 | indent_out
+    echo '* route print::'
+    route print 2>&1 | indent_out
+else
+    echo 'no network configuration command found.'
+    echo ''
+fi
+
+if has_command rfkill; then
+    echo '* rfkill list::'
+    rfkill list 2>&1 | indent_out
+fi
+
+for ETCFILE in /etc/resolv.conf /etc/hosts; do
+    if [ -r "$ETCFILE" ]; then
+        echo "* $ETCFILE::"
+        indent_out <"$ETCFILE"
+    else
+        echo "* $ETCFILE not readable."
+    fi
+done
+if [ -d /proc/sys/net ]; then
+    echo '* sysctl::'
+    for SYSCTLFILE in \
+        /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts \
+        /proc/sys/net/ipv4/ip_forward \
+        /proc/sys/net/ipv4/tcp_syncookies \
+        /proc/sys/net/ipv[46]/conf/*/accept_redirects \
+        /proc/sys/net/ipv[46]/conf/*/accept_source_route \
+        /proc/sys/net/ipv[46]/conf/*/forwarding \
+        /proc/sys/net/ipv6/conf/*/use_tempaddr; do
+        if [ -r "$SYSCTLFILE" ]; then
+            echo "$(echo "${SYSCTLFILE#/proc/sys/}" | tr / .) = $(cat "$SYSCTLFILE")"
+        fi
+    done | sort | indent_out
+else
+    echo '* /proc/sys/net not readable.'
+    echo ''
+fi
+
+echo 'Disk information'
+echo '----------------'
+echo ''
+if has_command lsblk; then
+    echo '* lsblk::'
+    lsblk 2>&1 | indent_out
+else
+    echo '* lsblk command not found.'
+fi
+if has_command findmnt; then
+    echo '* findmnt::'
+    findmnt | indent_out
+elif has_command mount; then
+    echo '* mount::'
+    mount | indent_out
+else
+    echo '* findmnt and mount commands not found.'
+fi
+if has_command blkid; then
+    echo '* blkid::'
+    blkid 2>&1 | indent_out
+else
+    echo '* blkid command not found.'
+fi
+if has_command lvm; then
+    echo '* LVM information:'
+    echo ''
+    for CMD in pvdisplay vgdisplay lvdisplay; do
+        echo "  - lvm $CMD::"
+        lvm "$CMD" 2>&1 | indent_out '      '
+    done
+fi
+
+echo ''
+echo 'Boot information'
+echo '----------------'
+echo ''
+if has_command bootctl; then
+    echo '* bootctl::'
+    bootctl 2>&1 | indent_out
+else
+    echo '* bootctl command not found.'
+fi
+
+echo ''
+echo 'Build information'
+echo '-----------------'
+echo ''
+for CC in gcc clang; do
+    if has_command "$CC"; then
+        echo "* \`\`$CC -march=native\`\` flags::"
+        (
+            cd / &&
+            "$CC" -march=native -E -v - </dev/null 2>&1 >/dev/null ||
+            echo " Error $? in cc1 $CC -march=native -E -v - < /dev/null"
+        ) |
+        sed -n 's/ /  /g;s/ -[Ev]\? / /g;s/  */ /g;s/^ *.*cc1\(.*\)$/\1/p' |
+        fmt -80 |
+        indent_out
+    else
+        echo "* $CC command not found."
+    fi
+done
+
+echo ''
+echo 'Kernel information'
+echo '------------------'
+echo ''
+for PROCFILE in version cmdline modules iomem; do
+    if [ -r "/proc/$PROCFILE" ]; then
+        echo "* /proc/$PROCFILE::"
+        fmt -80 -s <"/proc/$PROCFILE" | indent_out
+    else
+        echo "* /proc/$PROCFILE not readable."
+    fi
+done
+if [ -d /proc/sys/kernel ]; then
+    echo '* sysctl::'
+    for SYSCTLFILE in \
+        /proc/sys/kernel/core_pattern \
+        /proc/sys/kernel/dmesg_restrict \
+        /proc/sys/kernel/domainname \
+        /proc/sys/kernel/hostname \
+        /proc/sys/kernel/kptr_restrict \
+        /proc/sys/kernel/modprobe \
+        /proc/sys/kernel/modules_disabled \
+        /proc/sys/kernel/osrelease \
+        /proc/sys/kernel/ostype \
+        /proc/sys/kernel/panic_on_oops \
+        /proc/sys/kernel/panic \
+        /proc/sys/kernel/perf_event_paranoid \
+        /proc/sys/kernel/printk \
+        /proc/sys/kernel/randomize_va_space \
+        /proc/sys/kernel/sysrq \
+        /proc/sys/kernel/yama/ptrace_scope \
+        /proc/sys/kernel/grsecurity/deny_new_usb \
+        /proc/sys/kernel/grsecurity/enforce_symlinksifowner \
+        /proc/sys/kernel/grsecurity/grsec_lock \
+        /proc/sys/kernel/grsecurity/rwxmap_logging \
+        /proc/sys/vm/laptop_mode \
+        /proc/sys/vm/swappiness; do
+        if [ -r "$SYSCTLFILE" ]; then
+            echo "$(echo "${SYSCTLFILE#/proc/sys/}" | tr / .) = $(cat "$SYSCTLFILE")"
+        fi
+    done | indent_out
+else
+    echo '* /proc/sys/kernel not readable.'
+    echo ''
+fi
+
+if [ -r /proc/sys/fs/binfmt_misc/status ]; then
+    # shellcheck disable=SC2016
+    echo '* binfmt (``/proc/sys/fs/binfmt_misc``):'
+    echo ''
+    echo "  - status: $(cat /proc/sys/fs/binfmt_misc/status)"
+    for FILE in /proc/sys/fs/binfmt_misc/*; do
+        FMTNAME="${FILE##*/}"
+        case "$FMTNAME" in
+            register | status) ;;
+
+            *)
+                if [ -r "$FILE" ]; then
+                    echo "  - $FMTNAME::"
+                    indent_out '      ' <"$FILE"
+                fi
+                ;;
+        esac
+    done
+    echo ''
+fi
+if has_command dmesg; then
+    echo '* dmesg::'
+    dmesg 2>&1 | indent_out
+fi
+
+echo ''
+echo 'Operating system information'
+echo '----------------------------'
+echo ''
+for ETCFILE in /etc/os-release /etc/issue /etc/motd; do
+    if [ -e "$ETCFILE" ]; then
+        echo "* $ETCFILE::"
+        indent_out <"$ETCFILE"
+    else
+        echo "* $ETCFILE does not exist."
+    fi
+done
+for ETCFILE in /etc/*-release /etc/*_version; do
+    if [ "$ETCFILE" = /etc/os-release ]; then
+        continue
+    elif [ -r "$ETCFILE" ]; then
+        echo "* $ETCFILE::"
+        indent_out <"$ETCFILE"
+    fi
+done
+# Distribution package manager configuration
+for ETCFILE in \
+    /etc/apt/preferences \
+    /etc/apt/preferences.d/* \
+    /etc/apt/sources.list \
+    /etc/apt/sources.list.d/* \
+    /etc/make.conf \
+    /etc/makepkg.conf \
+    /etc/pacman.conf \
+    /etc/portage/make.conf; do
+    if [ -e "$ETCFILE" ]; then
+        echo "* $ETCFILE (stripped)::"
+        grep -v -E '^[ \r\t]*(#|$)' "$ETCFILE" | indent_out
+    fi
+done
+# Debian apt-get configuration
+if has_command apt-config; then
+    echo '* apt-config dump::'
+    apt-config dump 2>&1 | indent_out
+fi
+
+# Windows-specific information
+if has_command net.exe; then
+    echo '* net user::'
+    net.exe user 2>&1 | indent_out
+    echo '* net view::'
+    net.exe view 2>&1 | indent_out
+    echo '* net view /domain::'
+    net.exe view /domain 2>&1 | indent_out
+    echo '* net start::'
+    net.exe start 2>&1 | indent_out
+fi
+
+# OS X-specific information
+if has_command sw_vers; then
+    echo '* sw_vers::'
+    sw_vers 2>&1 | indent_out
+fi
+if has_command brew; then
+    echo '* brew --repository::'
+    brew --repository 2>&1 | indent_out
+    echo '* brew config::'
+    brew config 2>&1 | indent_out
+fi
+
+echo ''
+echo 'Keys information'
+echo '----------------'
+echo ''
+if [ -r '/proc/keys' ]; then
+    echo '* /proc/keys::'
+    fmt -80 -s <'/proc/keys' | indent_out
+else
+    echo '* /proc/keys not readable.'
+fi
+if has_command keyctl; then
+    echo '* Kernel keyrings:'
+    echo ''
+    for KEYRING in @t @p @s @u @us @g @a; do
+        echo "  - keyctl show $KEYRING::"
+        keyctl show "$KEYRING" 2>&1 | indent_out '      '
+    done
+fi
+
+echo ''
+echo 'X11 information'
+echo '---------------'
+echo ''
+if [ -z "$DISPLAY" ]; then
+    # Use default screen if a socket is found
+    if [ -e '/tmp/.X11-unix/X0' ]; then
+        export DISPLAY=':0.0'
+    fi
+fi
+if [ -z "$DISPLAY" ]; then
+    echo 'No X11 server found.'
+else
+    echo "* \$DISPLAY = $DISPLAY"
+    if has_command setxkbmap; then
+        echo '* setxkbmap -print::'
+        setxkbmap -print 2>&1 | indent_out
+    fi
+fi
