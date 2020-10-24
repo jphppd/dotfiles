@@ -1,36 +1,37 @@
 .DEFAULT_GOAL := help
-VPATH = skel
 
+ALACRITTY_DEPS = .config/alacritty/alacritty.yml
 BASH_DEPS = .bash_login .bash_logout .bashrc $(wildcard .local/lib/shell/*)
 BIN_DEPS = $(wildcard .local/bin/*)
-DESKTOP_DEPS = .xinitrc .config/sway/config .i3status.conf
 DEV_DEPS = .gdbinit $(wildcard .config/git/*)
+I3_DEPS = .xinitrc .config/i3status/config
 SSH_DEPS = .ssh
+SWAY_DEPS = .config/sway/config .config/i3status/config
 TERM_DEPS = .inputrc .tmux.conf .vimrc
-X_TERM_DEPS = .config/alacritty/alacritty.yml .Xresources
+URXVT_DEPS = .Xresources
 
 skel.tar.gz: $(BASH_DEPS) $(BIN_DEPS) $(DEV_DEPS) $(SSH_DEPS) $(TERM_DEPS)
 	tar --create --gzip --file $@ $^
 
-x_skel.tar.gz: $(DESKTOP_DEPS) $(X_TERM_DEPS)
+desktop_skel.tar.gz:  $(ALACRITTY_DEPS) $(I3_DEPS) $(SWAY_DEPS) $(URXVT_DEPS)
 	tar --create --gzip --file $@ $^
 
 .PHONY: build
-build: skel.tar.gz x_skel.tar.gz ## Create all archives
+build: skel.tar.gz desktop_skel.tar.gz ## Create all archives
 
 .PHONY: install
 install: build ## Extract archive to HOME
 	mkdir --parents "${HOME}"
 	tar --extract --gunzip --directory="${HOME}" --file skel.tar.gz
 
-.PHONY: x-install
-x-install: build ## Extract x archives to HOME
+.PHONY: desktop-install
+desktop-install: build ## Extract desktop archive to HOME
 	mkdir --parents "${HOME}"
-	tar --extract --gunzip --directory="${HOME}" --file x_skel.tar.gz
+	tar --extract --gunzip --directory="${HOME}" --file desktop_skel.tar.gz
 
-.PHONY: mrproper
-mrproper: ## Clean the repository
-	rm --force skel.tar.gz x_skel.tar.gz
+.PHONY: clean
+clean: ## Clean the repository
+	rm --force skel.tar.gz desktop_skel.tar.gz
 
 .PHONY: help
 help: ## Print the help and exit.
