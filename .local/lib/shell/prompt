@@ -35,7 +35,7 @@ __prompt_command() {
   local git="\[\]"
   local venv="\[\]"
   local term_title="\[\]"
-  local trailing_sep=""
+  local trailing_sep="${dollar} "
   local ps1=""
 
   if [ "${exit_code}" != 0 ]; then
@@ -80,17 +80,17 @@ __prompt_command() {
   # Concatenation des elements
   ps1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}"
 
-  # Newline if ps1 is too long with respect to term width
-  local prompt_width
-  local term_width
-  prompt_width="$(__prompt_width "${ps1}")"
-  term_width="$(tput cols)"
+  # # Newline if ps1 is too long with respect to term width
+  # local prompt_width
+  # local term_width
+  # prompt_width="$(__prompt_width "${ps1}")"
+  # term_width="$(tput cols)"
 
-  if (( "${prompt_width}" + 20 > "${term_width}" )); then
-    trailing_sep="\n${dollar} "
-  else
-    trailing_sep="${dollar} "
-  fi
+  # if (( "${prompt_width}" + 20 > "${term_width}" )); then
+  #   trailing_sep="\n${dollar} "
+  # else
+  #   trailing_sep="${dollar} "
+  # fi
 
   # Set the title to user@host:dir
   case "$TERM" in

@@ -4,30 +4,49 @@
 # executed by bash(1) for login-shells
 #
 
-should_launch_ssh_agent() {
-  [[ -x /usr/bin/ssh-agent ]] && [[ -z "${SSH_AGENT_PID}" ]] && [[ -z "${SSH_TTY}" ]]
-}
-
-should_run_display() {
-  if [[ "$UID" -ne 0 ]] && [[ -z $DISPLAY ]] && [[ $(tty) == "/dev/tty1" ]]; then
-    [[ -x /usr/bin/startx ]] || [[ -x /usr/local/bin/sway ]]
-  else
-    false
-  fi
-}
-
 if [[ -f "${HOME}/.bashrc" ]] && [[ "$-" == *i* ]]; then
   source "${HOME}/.bashrc"
 fi
+
+# Ssh agent
+# =========
+
+should_launch_ssh_agent() {
+  [[ -x /usr/bin/ssh-agent ]] && [[ -z "${SSH_AGENT_PID}" ]] && [[ -z "${SSH_TTY}" ]]
+}
 
 if should_launch_ssh_agent; then
   eval "$(/usr/bin/ssh-agent)"
 fi
 
+unset should_launch_ssh_agent
+
+# Display
+# =======
+
+should_run_display() {
+  [[ "$UID" -ne 0 ]] && [[ -z $DISPLAY ]] && [[ $(tty) == "/dev/tty1" ]]
+}
+
 if should_run_display; then
-  if [[ -x /usr/local/bin/sway ]]; then
-    exec /usr/local/bin/sway
-  else
+  if [[ -x /usr/bin/sway ]]; then
+    exec /usr/bin/sway
+  elif [[ -x /usr/bin/startx ]]; then
     exec /usr/bin/startx
   fi
+fi
+
+unset should_run_display
+
+# Show who is here if it is a login, interactive shell
+# ====================================================
+
+if shopt -q login_shell && [[ $- == *i* ]]; then
+    case "$(tr '\0' ' ' <"/proc/${PPID}/cmdline")" in
+        login* | sshd*)
+            if command -v who-is-here >/dev/null; then
+                who-is-here
+            fi
+            ;;
+    esac
 fi

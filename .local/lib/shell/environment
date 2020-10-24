@@ -2,56 +2,66 @@
 # Define environment variables to customize the command line interface
 
 # Ensure that all bin and sbin folders are in PATH, if they are not symlinks
-colon_path=":$PATH:"
-for path_dir in /usr/local/bin /bin /usr/bin; do
-  if [ ! -L "$path_dir" ] && [ -d "$path_dir" ] && [ "${colon_path%:$path_dir:*}" = "$colon_path" ]; then
-    PATH="$path_dir:$PATH"
+
+append_to_path() {
+  if [[ ! -L "$1" ]] && [[ -d "$1" ]]; then
+    PATH="$1:$PATH"
   fi
-done
-for path_dir in /usr/local/sbin /sbin /usr/sbin; do
-  if [ "$(id -u)" -eq 0 ] && [ ! -L "$path_dir" ] && [ -d "$path_dir" ] && [ "${colon_path%:$path_dir:*}" = "$colon_path" ]; then
-    PATH="$path_dir:$PATH"
-  fi
-done
+}
+
+PATH=""
+
+if [[ "$(/usr/bin/id -u)" -eq 0 ]]; then
+  for path_dir in /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin; do
+    append_to_path "${path_dir}"
+  done
+else
+  for path_dir in /bin /usr/bin /usr/local/bin; do
+    append_to_path "${path_dir}"
+  done
+fi
+
+PATH="${PATH%:}"
 export PATH
 unset path_dir
+unset append_to_path
 
 # Find real home directory
 # Try sudo user
-if [ -z "$REAL_HOME" ] && [ -n "$SUDO_USER" ]; then
-  REAL_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+if [[ -z "${REAL_HOME}" ]] && [[ -n "${SUDO_USER}" ]]; then
+  REAL_HOME=$(/usr/bin/getent passwd "${SUDO_USER}" | cut -d: -f6)
 fi
 
 # Use current $HOME variable
-if [ -z "$REAL_HOME" ]; then
-  REAL_HOME="$HOME"
+if [[ -z "${REAL_HOME}" ]]; then
+  REAL_HOME="${HOME}"
 fi
+
 export REAL_HOME
 
 # Add home in path
-homebin="$REAL_HOME/bin"
-if [ -d "$homebin" ] && [ "${colon_path%:$homebin:*}" = "$colon_path" ]; then
-  export PATH="$homebin:$PATH"
+
+homebin="${REAL_HOME}/bin"
+if [[ -d "${homebin}" ]]; then
+  export PATH="${homebin}:${PATH}"
 fi
 unset homebin
 
-homelocalbin="$REAL_HOME/.local/bin"
-if [ -d "$homelocalbin" ] && [ "${colon_path%:$homelocalbin:*}" = "$colon_path" ]; then
-  export PATH="$homelocalbin:$PATH"
+homelocalbin="${REAL_HOME}/.local/bin"
+if [[ -d "${homelocalbin}" ]] ; then
+  export PATH="${homelocalbin}:${PATH}"
 fi
 unset homelocalbin
 
-homelocalsbin="$REAL_HOME/.local/sbin"
-if [ "$(id -u)" -eq 0 ] && [ -d "$homelocalsbin" ] && [ "${colon_path%:$homelocalsbin:*}" = "$colon_path" ]; then
-  export PATH="$homelocalsbin:$PATH"
+homelocalsbin="${REAL_HOME}/.local/sbin"
+if [[ "$(/usr/bin/id -u)" -eq 0 ]] && [[ -d "${homelocalsbin}" ]]; then
+  export PATH="${homelocalsbin}:$PATH"
 fi
 unset homelocalsbin
 
-unset colon_path
-
 # Python configuration
-if [ -r "$REAL_HOME/.pythonrc" ]; then
-  export PYTHONSTARTUP="$REAL_HOME/.pythonrc"
+if [[ -r "${REAL_HOME}/.pythonrc" ]]; then
+  export PYTHONSTARTUP="${REAL_HOME}/.pythonrc"
 fi
 
 # Prevent Erase in Line (EL) to Right (\33[K) in the colored output of grep.
@@ -59,12 +69,12 @@ fi
 export GREP_COLORS='ne'
 
 # Use Vim
-if [ -x /usr/bin/vim ] || command -v vim >/dev/null; then
+if [[ -x /usr/bin/vim ]] || command -v vim >/dev/null; then
   export EDITOR=vim
 fi
 
 # Use less
-if [ -x /usr/bin/less ] || command -v less >/dev/null; then
+if [[ -x /usr/bin/less ]] || command -v less >/dev/null; then
   # Force -R = --RAW-CONTROL-CHARS to have colors in less
   export LESS='--RAW-CONTROL-CHARS'
   export LESSCOLOR='yes'
@@ -74,13 +84,13 @@ if [ -x /usr/bin/less ] || command -v less >/dev/null; then
 fi
 
 # Make less more friendly for non-text input files, see lesspipe(1)
-if [ -x /usr/bin/lesspipe ]; then
+if [[ -x /usr/bin/lesspipe ]]; then
   export LESSOPEN="| /usr/bin/lesspipe %s"
   export LESSCLOSE="/usr/bin/lesspipe %s %s"
 fi
 
 # Use most to display man pages using colors
-if [ -x /usr/bin/most ] || command -v most >/dev/null; then
+if [[ -x /usr/bin/most ]] || command -v most >/dev/null; then
   export MANPAGER=most
 fi
 
@@ -91,19 +101,19 @@ export GCC_COLORS=1
 eval "$(dircolors --bourne-shell)"
 
 # Warn about dangerous environment
-if [ -s /etc/ld.so.preload ]; then
+if [[ -s /etc/ld.so.preload ]]; then
   (tput bold && tput setaf 1) 2>/dev/null
   echo >&2 'Warning: /etc/ld.so.preload is present on this system!'
   tput sgr0 2>/dev/null
 fi
 
-if [ -n "${LD_PRELOAD}" ]; then
+if [[ -n "${LD_PRELOAD}" ]]; then
   (tput bold && tput setaf 1) 2>/dev/null
   echo >&2 'Warning: LD_PRELOAD is set!'
   tput sgr0 2>/dev/null
 fi
 
-if [ -n "${LD_LIBRARY_PATH}" ]; then
+if [[ -n "${LD_LIBRARY_PATH}" ]]; then
   (tput bold && tput setaf 1) 2>/dev/null
   echo >&2 'Warning: LD_LIBRARY_PATH is set!'
   tput sgr0 2>/dev/null
@@ -111,6 +121,6 @@ fi
 
 export JAVA_TOOL_OPTIONS='-Dawt.useSystemAAFontSettings=gasp'
 
-if ! [ -z "${WAYLAND_DISPLAY}" ]; then
+if [[ ! -z "${WAYLAND_DISPLAY}" ]]; then
   export _JAVA_AWT_WM_NONREPARENTING=1
 fi

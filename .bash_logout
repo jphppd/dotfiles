@@ -4,13 +4,13 @@
 # executed by bash(1) when login shell exits.
 #
 
-should_kill_ssh_agent() {
+_BASH_LOGOUT_should_kill_ssh_agent() {
   [[ -x /usr/bin/ssh-agent ]] &&
     [[ -n "${SSH_AGENT_PID}" ]] &&
     [[ -z "${TMUX}" ]]
 }
 
-if should_kill_ssh_agent; then
+if _BASH_LOGOUT_should_kill_ssh_agent; then
   ssh-agent -k
 fi
 

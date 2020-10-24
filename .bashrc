@@ -47,17 +47,5 @@ for shell_file in aliases environment functions prompt 'local'; do
     fi
 done
 
-unset shell_config_dir shell_file
-
-# Show who is here if it is a login, interactive shell
-# ====================================================
-
-if shopt -q login_shell && [[ $- == *i* ]]; then
-    case "$(tr '\0' ' ' <"/proc/${PPID}/cmdline")" in
-        login* | sshd*)
-            if command -v who-is-here >/dev/null; then
-                who-is-here
-            fi
-            ;;
-    esac
-fi
+unset shell_file
+unset shell_config_dir
