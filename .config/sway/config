@@ -10,7 +10,7 @@ input type:touchpad {
     accel_profile adaptive
 }
 
-output * bg "${HOME}/.wallpaper" fill
+output * bg "${HOME}/.local/share/desktop_wallpaper" fill
 
 gaps outer 0
 gaps inner 5
@@ -20,7 +20,6 @@ smart_gaps on
 set $mod Mod4
 
 font pango:DejaVu Sans Mono 9
-#font pango:Inconsolata Bold 10
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod

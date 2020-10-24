@@ -14,10 +14,10 @@ general {
    color_bad      = "#BB0000"
 }
 
-order += "ipv6"
+# order += "ipv6"
 order += "run_watch DHCP"
 order += "run_watch VPN"
-order += "ethernet enp0s25"
+order += "ethernet enp5s0"
 order += "wireless wlp3s0"
 order += "disk /"
 order += "disk /home"
@@ -31,7 +31,7 @@ wireless wlp3s0 {
    format_down = "W: down"
 }
 
-ethernet enp0s25 {
+ethernet enp5s0 {
    format_up = "E: %ip (%speed)"
    format_down = "E: down"
 }
