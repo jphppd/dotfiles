@@ -6,7 +6,7 @@ BIN_DEPS = $(wildcard .local/bin/*)
 DEV_DEPS = .gdbinit $(wildcard .config/git/*)
 I3_DEPS = .xinitrc .config/i3status/config
 SSH_DEPS = .ssh
-SWAY_DEPS = .config/sway/config .config/i3status/config
+SWAY_DEPS = .config/sway/config $(wildcard .config/i3status-rust/*)
 TERM_DEPS = .inputrc .tmux.conf .vimrc
 URXVT_DEPS = .Xresources
 

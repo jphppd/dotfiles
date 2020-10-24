@@ -1,0 +1,26 @@
+# Yale blue
+# Yale blue dark  00356B
+# Yale blue       286DC0
+# Yale blue light 63AAFF
+#
+# Green  5f712d
+# Orange bd5319
+# Red    ff0000
+#
+idle_bg = "#00356b"
+idle_fg = "#bbbbbb"
+info_bg = "#00356b"
+info_fg = "#ffffff"
+good_bg = "#00356b"
+good_fg = "#5f712d"
+warning_bg = "#00356b"
+warning_fg = "#bd5319"
+critical_bg = "#00356b"
+critical_fg = "#ff0000"
+
+separator = "|"
+separator_bg = "#00356b"
+separator_fg = "#63aaff"
+
+alternating_tint_bg = "#000000"
+alternating_tint_fg = "#000000"

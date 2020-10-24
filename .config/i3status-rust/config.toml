@@ -1,0 +1,81 @@
+icons = "awesome"
+
+[theme]
+file = "custom_theme.toml"
+
+[[block]]
+block = "toggle"
+interval = 10
+text = "VPN"
+command_state = "ls -A /run/openvpn/*pid 2>/dev/null"
+command_on = "sudo systemctl restart openvpn@sysnav.service"
+command_off = "sudo systemctl stop openvpn@sysnav.service"
+
+[[block]]
+block = "net"
+interval = 2
+device = "wlp3s0"
+format = "{ssid} {signal_strength} {ip} {speed_down} {graph_down}"
+use_bits = true
+speed_digits = 2
+
+[[block]]
+block = "net"
+interval = 2
+device = "enp5s0"
+format = "{ip} {speed_down} {graph_down}"
+use_bits = true
+speed_digits = 2
+
+[[block]]
+block = "disk_space"
+interval = 10
+path = "/"
+alias = "/"
+format = "{icon}{alias} {available}{unit}"
+
+[[block]]
+block = "disk_space"
+interval = 10
+path = "/home"
+alias = "/home"
+format = "{icon}{alias} {available}{unit}"
+
+[[block]]
+block = "memory"
+interval = 5
+clickable = false
+display_type = "memory"
+format_mem = "{MApi}%"
+
+[[block]]
+block = "cpu"
+interval = 2
+format = "{barchart} {utilization}"
+
+[[block]]
+block = "load"
+interval = 5
+format = "{1m}"
+
+[[block]]
+block = "battery"
+interval = 10
+critical = 10
+warning = 30
+info = 60
+good = 95
+format = "{percentage}% {time}"
+
+[[block]]
+block = "backlight"
+device = "amdgpu_bl0"
+
+[[block]]
+block = "sound"
+
+[[block]]
+block = "time"
+interval = 1
+on_click = "alacritty -e bash -c 'ncal -ywM;read -n 1;'"
+format = "%Y-%m-%d %H:%M:%S W%V"

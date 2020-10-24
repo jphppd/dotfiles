@@ -16,7 +16,7 @@ if [[ "$(/usr/bin/id -u)" -eq 0 ]]; then
     append_to_path "${path_dir}"
   done
 else
-  for path_dir in /bin /usr/bin /usr/local/bin; do
+  for path_dir in /sbin /usr/sbin /usr/local/sbin /bin /usr/bin /usr/local/bin; do
     append_to_path "${path_dir}"
   done
 fi
