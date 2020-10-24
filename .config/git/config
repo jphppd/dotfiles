@@ -40,15 +40,15 @@
     ui = auto
 
 [core]
-    excludesFile = ~/.local/lib/git/ignore
+    excludesFile = ~/.config/git/ignore
     pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
     autocrlf = input
 
 [include]
-    path = ~/.local/lib/git/credentials
+    path = ~/.config/git/credentials
 
 [init]
-    templateDir = ~/.local/lib/git/template
+    templateDir = ~/.config/git/template
 
 [merge]
     tool = vimdiff
