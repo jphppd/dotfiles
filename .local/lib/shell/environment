@@ -98,7 +98,12 @@ fi
 export GCC_COLORS=1
 
 # Use nice ls colors
+# dircolors does not know alacritty. Switching temporarily to another term
+OLDTERM="${TERM}"
+export TERM=xterm-256color
 eval "$(dircolors --bourne-shell)"
+TERM="${OLDTERM}"
+export TERM
 
 # Warn about dangerous environment
 if [[ -s /etc/ld.so.preload ]]; then
