@@ -4,7 +4,7 @@
 # executed by bash(1) when login shell exits.
 #
 
-_BASH_LOGOUT_should_kill_ssh_agent() {
+should_kill_ssh_agent() {
   [[ -x /usr/bin/ssh-agent ]] &&
     [[ -n "${SSH_AGENT_PID}" ]] &&
     [[ -z "${TMUX}" ]]
@@ -13,6 +13,8 @@ _BASH_LOGOUT_should_kill_ssh_agent() {
 if _BASH_LOGOUT_should_kill_ssh_agent; then
   ssh-agent -k
 fi
+
+unset should_kill_ssh_agent
 
 # when leaving the console clear the screen to increase privacy
 if [[ "${SHLVL}" -eq 1 ]]; then
