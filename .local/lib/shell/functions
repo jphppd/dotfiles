@@ -8,20 +8,20 @@
 # shells (Bash, Ash, ...) use -p option, so use echo to be compatible.
 # Dash fails with "read: Illegal option -s" as this is not POSIX-compliant.
 read_pass() {
-  # shellcheck disable=SC2039
-  printf >&2 'Password: ' && read -r -s "$@" && echo ''
+    # shellcheck disable=SC2039
+    printf >&2 'Password: ' && read -r -s "$@" && echo ''
 }
 
 # Print args or use standard input (mainly for internal use)
 print_args_or_stdin() {
-  if [[ $# -eq 0 ]] || [[ "$1" == "-" ]]; then
-    cat
-  else
-    while [ $# -ge 1 ]; do
-      echo "$1"
-      shift
-    done
-  fi
+    if [[ $# -eq 0 ]] || [[ "$1" == "-" ]]; then
+        cat
+    else
+        while [ $# -ge 1 ]; do
+            echo "$1"
+            shift
+        done
+    fi
 }
 
 # Escape control characters when cat'ing binary streams to a TTY
@@ -30,15 +30,15 @@ print_args_or_stdin() {
 # testing wether /bin/cat is a symbolic link.
 
 ccat() {
-  for current_file in "$@"; do
-    if file --mime "${current_file}" | grep "charset=binary" >/dev/null; then
-      # shellcheck disable=SC1117
-      printf "File %s is binary, skipping\n" "${current_file}" >&2
-    else
-      cat "$@"
+    for current_file in "$@"; do
+        if file --mime "${current_file}" | grep "charset=binary" >/dev/null; then
+            # shellcheck disable=SC1117
+            printf "File %s is binary, skipping\n" "${current_file}" >&2
+        else
+            cat "$@"
 
-    fi
-  done
+        fi
+    done
 }
 
 #########
@@ -48,22 +48,22 @@ ccat() {
 # Find broken symlinks
 # shellcheck disable=SC2185
 case $(find --help 2>/dev/null) in
-  *-xtype*)
-    find-broken() {
-      find "$@" -xtype l -print
-    }
-    ;;
-  *)
-    find-broken() {
-      # shellcheck disable=SC2039
-      find "$@" -type l ! -exec test -e {} \; -print
-    }
-    ;;
+    *-xtype*)
+        find-broken() {
+            find "$@" -xtype l -print
+        }
+        ;;
+    *)
+        find-broken() {
+            # shellcheck disable=SC2039
+            find "$@" -type l ! -exec test -e {} \; -print
+        }
+        ;;
 esac
 
 # Find empty directories
 find-empty() {
-  find "$@" -type d -empty -print
+    find "$@" -type d -empty -print
 }
 
 ################################################
@@ -71,23 +71,23 @@ find-empty() {
 ################################################
 
 du1() {
-  du --human-readable --max-depth=1
+    du --human-readable --max-depth=1
 }
 
 du2() {
-  du --human-readable --max-depth=2
+    du --human-readable --max-depth=2
 }
 
 dus() {
-  du --human-readable "$@" | sort --human-numeric-sort
+    du --human-readable "$@" | sort --human-numeric-sort
 }
 
 du1s() {
-  du --human-readable --max-depth=1 "$@" | sort --human-numeric-sort
+    du --human-readable --max-depth=1 "$@" | sort --human-numeric-sort
 }
 
 du2s() {
-  du --human-readable --max-depth=2 "$@" | sort --human-numeric-sort
+    du --human-readable --max-depth=2 "$@" | sort --human-numeric-sort
 }
 
 ######################
@@ -97,21 +97,21 @@ du2s() {
 # Generate random passwords from kernel random number generator
 # see also: openssl rand -base64 16
 gen_pass_alnum() {
-  # Keeps alphanumeric only
-  tr --complement --delete '[:alnum:]' </dev/urandom | head --bytes="${1:-16}"
-  echo ''
+    # Keeps alphanumeric only
+    tr --complement --delete '[:alnum:]' </dev/urandom | head --bytes="${1:-16}"
+    echo ''
 }
 
 gen_pass() {
-  # Keeps only non-so-special symbols
-  tr --complement --delete '[:alnum:]!%&*+,\-./?@^_' </dev/urandom | head --bytes="${1:-16}"
-  echo ''
+    # Keeps only non-so-special symbols
+    tr --complement --delete '[:alnum:]!%&*+,\-./?@^_' </dev/urandom | head --bytes="${1:-16}"
+    echo ''
 }
 
 gen_pass_asc() {
-  # Keeps all ASCII characters.
-  tr --complement --delete '[:alnum:]!#$%&()*+,\-./:;<=>?@[\\]^_{|}' </dev/urandom | head --bytes="${1:-16}"
-  echo ''
+    # Keeps all ASCII characters.
+    tr --complement --delete '[:alnum:]!#$%&()*+,\-./:;<=>?@[\\]^_{|}' </dev/urandom | head --bytes="${1:-16}"
+    echo ''
 }
 
 ##########################################
@@ -119,29 +119,29 @@ gen_pass_asc() {
 ##########################################
 
 epoch2date() {
-  if [[ $# -ge 1 ]]; then
-    while [[ $# -ge 1 ]]; do
-      date "--date=@$1"
-      shift
-    done
-  else
-    echo >&2 "Usage: epoch2date TIMESTAMP [...]"
-  fi
+    if [[ $# -ge 1 ]]; then
+        while [[ $# -ge 1 ]]; do
+            date "--date=@$1"
+            shift
+        done
+    else
+        echo >&2 "Usage: epoch2date TIMESTAMP [...]"
+    fi
 }
 
 epoch2utc() {
-  if [[ $# -ge 1 ]]; then
-    while [[ $# -ge 1 ]]; do
-      date --utc "--date=@$1"
-      shift
-    done
-  else
-    echo >&2 "Usage: epoch2utc TIMESTAMP [...]"
-  fi
+    if [[ $# -ge 1 ]]; then
+        while [[ $# -ge 1 ]]; do
+            date --utc "--date=@$1"
+            shift
+        done
+    else
+        echo >&2 "Usage: epoch2utc TIMESTAMP [...]"
+    fi
 }
 
 epoch() {
-  date '+%s'
+    date '+%s'
 }
 
 ################
@@ -149,25 +149,25 @@ epoch() {
 ################
 
 if [[ -x /usr/bin/jq ]] || command -v jq >/dev/null; then
-  pretty_json() {
-    # Use jq
-    jq --sort-keys <"$@"
-  }
+    pretty_json() {
+        # Use jq
+        jq --sort-keys <"$@"
+    }
 elif [[ -x /usr/bin/python ]] || command -v python >/dev/null; then
-  pretty_json() {
-    # Use Python's json module
-    cat "$@" | python -m json.tool
-  }
+    pretty_json() {
+        # Use Python's json module
+        cat "$@" | python -m json.tool
+    }
 else
-  pretty_json() {
-    # Use Perl's json_pp
-    cat "$@" | json_pp
-  }
+    pretty_json() {
+        # Use Perl's json_pp
+        cat "$@" | json_pp
+    }
 fi
 
 pretty_xml() {
-  # Use xmllint from libxml2
-  cat "$@" | xmllint --format -
+    # Use xmllint from libxml2
+    cat "$@" | xmllint --format -
 }
 
 ######################
@@ -175,87 +175,87 @@ pretty_xml() {
 ######################
 
 hex2dec() {
-  (
-    echo 'obase=10;ibase=16'
-    (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
-  ) | bc --quiet
+    (
+        echo 'obase=10;ibase=16'
+        (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
+    ) | bc --quiet
 }
 
 hex2oct() {
-  (
-    echo 'obase=8;ibase=16'
-    (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
-  ) | bc --quiet | xargs -I{} echo "0{}"
+    (
+        echo 'obase=8;ibase=16'
+        (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
+    ) | bc --quiet | xargs -I{} echo "0{}"
 }
 
 hex2bin() {
-  (
-    echo 'obase=2;ibase=16'
-    (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
-  ) | bc --quiet
+    (
+        echo 'obase=2;ibase=16'
+        (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
+    ) | bc --quiet
 }
 
 dec2hex() {
-  (
-    echo 'obase=16;ibase=10'
-    print_args_or_stdin "$@"
-  ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
+    (
+        echo 'obase=16;ibase=10'
+        print_args_or_stdin "$@"
+    ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
 }
 
 dec2oct() {
-  (
-    echo 'obase=8;ibase=10'
-    print_args_or_stdin "$@"
-  ) | bc --quiet | xargs -I{} echo "0{}"
+    (
+        echo 'obase=8;ibase=10'
+        print_args_or_stdin "$@"
+    ) | bc --quiet | xargs -I{} echo "0{}"
 }
 
 dec2bin() {
-  (
-    echo 'obase=2;ibase=10'
-    print_args_or_stdin "$@"
-  ) | bc --quiet
+    (
+        echo 'obase=2;ibase=10'
+        print_args_or_stdin "$@"
+    ) | bc --quiet
 }
 
 oct2hex() {
-  (
-    echo 'obase=16;ibase=8'
-    (print_args_or_stdin "$@" | sed 's/^0//')
-  ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
+    (
+        echo 'obase=16;ibase=8'
+        (print_args_or_stdin "$@" | sed 's/^0//')
+    ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
 }
 
 oct2dec() {
-  (
-    echo 'obase=10;ibase=8'
-    (print_args_or_stdin "$@" | sed 's/^0//')
-  ) | bc --quiet
+    (
+        echo 'obase=10;ibase=8'
+        (print_args_or_stdin "$@" | sed 's/^0//')
+    ) | bc --quiet
 }
 
 oct2bin() {
-  (
-    echo 'obase=2;ibase=8'
-    (print_args_or_stdin "$@" | sed 's/^0//')
-  ) | bc --quiet
+    (
+        echo 'obase=2;ibase=8'
+        (print_args_or_stdin "$@" | sed 's/^0//')
+    ) | bc --quiet
 }
 
 bin2hex() {
-  (
-    echo 'obase=16;ibase=2'
-    print_args_or_stdin "$@"
-  ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
+    (
+        echo 'obase=16;ibase=2'
+        print_args_or_stdin "$@"
+    ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
 }
 
 bin2dec() {
-  (
-    echo 'obase=10;ibase=2'
-    print_args_or_stdin "$@"
-  ) | bc --quiet
+    (
+        echo 'obase=10;ibase=2'
+        print_args_or_stdin "$@"
+    ) | bc --quiet
 }
 
 bin2oct() {
-  (
-    echo 'obase=8;ibase=2'
-    print_args_or_stdin "$@"
-  ) | bc --quiet | xargs -I{} echo "0{}"
+    (
+        echo 'obase=8;ibase=2'
+        print_args_or_stdin "$@"
+    ) | bc --quiet | xargs -I{} echo "0{}"
 }
 
 ##############
@@ -264,63 +264,63 @@ bin2oct() {
 
 # Recursive md5sum, sha1sum, sha256sum... in directories, optional sorting
 md5sumd() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec md5sum {} +
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec md5sum {} +
 }
 
 sha1sumd() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha1sum {} +
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha1sum {} +
 }
 
 sha224sumd() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha224sum {} +
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha224sum {} +
 }
 
 sha256sumd() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha256sum {} +
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha256sum {} +
 }
 
 sha384sumd() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha384sum {} +
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha384sum {} +
 }
 
 sha512sumd() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha512sum {} +
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha512sum {} +
 }
 
 md5sumds() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec md5sum {} + | sort
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec md5sum {} + | sort
 }
 
 sha1sumds() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha1sum {} + | sort
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha1sum {} + | sort
 }
 
 sha224sumds() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha224sum {} + | sort
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha224sum {} + | sort
 }
 
 sha256sumds() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha256sum {} + | sort
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha256sum {} + | sort
 }
 
 sha384sumds() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha384sum {} + | sort
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha384sum {} + | sort
 }
 
 sha512sumds() {
-  # shellcheck disable=SC2039
-  find "$@" -type f -exec sha512sum {} + | sort
+    # shellcheck disable=SC2039
+    find "$@" -type f -exec sha512sum {} + | sort
 }
 
 ########################
@@ -329,52 +329,52 @@ sha512sumds() {
 
 # Sort IPv4 addresses
 ipv4sort() {
-  sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 "$@"
+    sort -n -t . -k 1,1 -k 2,2 -k 3,3 -k 4,4 "$@"
 }
 
 # Get the public IP address used by default, through HTTP or DNS
 # http://ifconfig.me/ is not used as it is not HTTPS
 public_ipv4_dns() {
-  if [[ -x /usr/bin/dig ]] || command -v dig >/dev/null 2>&1; then
-    dig +short -4 -t A myip.opendns.com @resolver1.opendns.com
-  elif [[ -x /usr/bin/host ]] || command -v host >/dev/null 2>&1; then
-    LANG=C host myip.opendns.com resolver1.opendns.com |
-      sed -n 's/^myip\.opendns\.com has address //p'
-  else
-    echo >&2 'could not find commands dig or host'
-    return 1
-  fi
+    if [[ -x /usr/bin/dig ]] || command -v dig >/dev/null 2>&1; then
+        dig +short -4 -t A myip.opendns.com @resolver1.opendns.com
+    elif [[ -x /usr/bin/host ]] || command -v host >/dev/null 2>&1; then
+        LANG=C host myip.opendns.com resolver1.opendns.com |
+        sed -n 's/^myip\.opendns\.com has address //p'
+    else
+        echo >&2 'could not find commands dig or host'
+        return 1
+    fi
 }
 
 public_ipv6_dns() {
-  if [[ -x /usr/bin/dig ]] || command -v dig >/dev/null 2>&1; then
-    dig +short -6 -t AAAA myip.opendns.com @resolver1.ipv6-sandbox.opendns.com
-  elif [[ -x /usr/bin/host ]] || command -v host >/dev/null 2>&1; then
-    LANG=C host -6 -t AAAA myip.opendns.com resolver1.ipv6-sandbox.opendns.com |
-      sed -n 's/^myip\.opendns\.com has IPv6 address //p'
-  else
-    echo >&2 'could not find commands dig or host'
-    return 1
-  fi
+    if [[ -x /usr/bin/dig ]] || command -v dig >/dev/null 2>&1; then
+        dig +short -6 -t AAAA myip.opendns.com @resolver1.ipv6-sandbox.opendns.com
+    elif [[ -x /usr/bin/host ]] || command -v host >/dev/null 2>&1; then
+        LANG=C host -6 -t AAAA myip.opendns.com resolver1.ipv6-sandbox.opendns.com |
+        sed -n 's/^myip\.opendns\.com has IPv6 address //p'
+    else
+        echo >&2 'could not find commands dig or host'
+        return 1
+    fi
 }
 
 public_ipv4_https() {
-  # https://ipv4.wtfismyip.com/json is also possible
-  # https://ipinfo.io/ip too
-  curl --silent -4 'https://diagnostic.opendns.com/myip' && echo ''
+    # https://ipv4.wtfismyip.com/json is also possible
+    # https://ipinfo.io/ip too
+    curl --silent -4 'https://diagnostic.opendns.com/myip' && echo ''
 }
 
 public_ipv6_https() {
-  # https://ipv6.wtfismyip.com/json is also possible
-  curl --silent -6 'https://diagnostic.opendns.com/myip' && echo ''
+    # https://ipv6.wtfismyip.com/json is also possible
+    curl --silent -6 'https://diagnostic.opendns.com/myip' && echo ''
 }
 
 # Test the functions above
 all_public_ips() {
-  echo "public_ipv4_dns: $(public_ipv4_dns)"
-  echo "public_ipv4_https: $(public_ipv4_https)"
-  echo "public_ipv6_dns: $(public_ipv6_dns)"
-  echo "public_ipv6_https: $(public_ipv6_https)"
+    echo "public_ipv4_dns: $(public_ipv4_dns)"
+    echo "public_ipv4_https: $(public_ipv4_https)"
+    echo "public_ipv6_dns: $(public_ipv6_dns)"
+    echo "public_ipv6_https: $(public_ipv6_https)"
 }
 
 #########
@@ -383,28 +383,28 @@ all_public_ips() {
 
 # Retrieve HTTPS certificate of a website
 get_https_cert() {
-  openssl s_client -servername "$1" -connect "$1:443" \
-    -showcerts </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
+    openssl s_client -servername "$1" -connect "$1:443" \
+        -showcerts </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
 }
 
 get_https_cert_proxy() {
-  local S_CLIENT_PROXY
-  S_CLIENT_PROXY="$(
-    (
-      echo "${https_proxy-}"
-      echo "${HTTPS_PROXY-}"
-      echo "${all_proxy-}"
-      echo "${ALL_PROXY-}"
-    ) |
-      sed -n 's,^\(http://\)\?\([0-9a-zA-Z._-]\+:[0-9]\+\)\(/\)\?$,\2,p' |
-      sed -n 1p
-  )"
-  if [ -z "$S_CLIENT_PROXY" ]; then
-    echo >&2 "Unable to find the proxy settings"
-    exit 1
-  fi
-  openssl s_client -servername "$1" -connect "$1:443" \
-    -proxy "$S_CLIENT_PROXY" \
-    -showcerts </dev/null |
+    local S_CLIENT_PROXY
+    S_CLIENT_PROXY="$(
+        (
+            echo "${https_proxy-}"
+            echo "${HTTPS_PROXY-}"
+            echo "${all_proxy-}"
+            echo "${ALL_PROXY-}"
+        ) |
+        sed -n 's,^\(http://\)\?\([0-9a-zA-Z._-]\+:[0-9]\+\)\(/\)\?$,\2,p' |
+        sed -n 1p
+    )"
+    if [ -z "$S_CLIENT_PROXY" ]; then
+        echo >&2 "Unable to find the proxy settings"
+        exit 1
+    fi
+    openssl s_client -servername "$1" -connect "$1:443" \
+        -proxy "$S_CLIENT_PROXY" \
+        -showcerts </dev/null |
     sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p'
 }
