@@ -60,6 +60,7 @@ repos:
       - id: shell-check-syntax
       - id: shell-check
       - id: shell-script-must-have-extension
+        exclude: ^.bashrc$
       - id: shell-script-must-not-have-extension
       - id: shell-bashate
       - id: shell-beautysh

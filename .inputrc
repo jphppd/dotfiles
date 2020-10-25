@@ -63,6 +63,10 @@ set visible-stats on
 
 # make autocomplete case-insensitive
 set completion-ignore-case on
+set completion-map-case on
+
+# do not insert characters from the completion that match characters
+set skip-completed-text on
 
 # immediately show the completions list
 set show-all-if-ambiguous on
@@ -83,6 +87,12 @@ set colored-stats on
 
 # disable the "-- more --" prompt for long lists
 set page-completions off
+
+# briefly move the cursor to an opening parenthesis
+set blink-matching-paren on
+
+# paste into the editing buffer as a single string of characters
+set enable-bracketed-paste on
 
 # Be 8 bit clean.
 set input-meta on

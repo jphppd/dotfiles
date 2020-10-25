@@ -13,22 +13,24 @@ input type:touchpad {
 output * bg "${HOME}/.local/share/desktop_wallpaper" fill
 
 gaps outer 0
-gaps inner 5
-smart_borders on
-smart_gaps on
+gaps inner 3
+smart_borders off
+smart_gaps off
 
 set $mod Mod4
+set $term alacritty
+set $menu dmenu_run -nf '#DDDDDD' -nb '#222222' -sb '#00356B' -sf '#FFFFFF' -fn 'monospace-10' -p ' > '
 
 font pango:DejaVu Sans Mono, FontAwesome 9
 
 # Use Mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
+floating_modifier $mod normal
 
 # start a terminal
 # bindsym $mod+Return       exec "/usr/bin/urxvtc"
 # bindsym $mod+Shift+Return exec "/usr/bin/urxvtc -e ranger"
-bindsym $mod+Return       exec "alacritty"
-bindsym $mod+Shift+Return exec "alacritty -e ranger"
+bindsym $mod+Return       exec "$term"
+bindsym $mod+Shift+Return exec "$term -e ranger"
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -120,7 +122,7 @@ mode "resize" {
    bindsym Escape mode "default"
 }
 # start dmenu (a program launcher)
-bindsym $mod+d exec "dmenu_run -nf '#DDDDDD' -nb '#222222' -sb '#00356B' -sf '#FFFFFF' -fn 'monospace-10' -p ' > '"
+bindsym $mod+d exec $menu
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)

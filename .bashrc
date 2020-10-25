@@ -21,7 +21,7 @@ export HISTCONTROL=erasedups:ignorespace
 # Set various bash options
 # ========================
 
-shopt -s cdspell checkwinsize dirspell
+shopt -s cdspell checkwinsize dirspell direxpand
 
 # Shell completion
 # ================
