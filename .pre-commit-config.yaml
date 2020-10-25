@@ -67,3 +67,4 @@ repos:
       - id: xml-check-syntax
       - id: yaml-check-syntax
       - id: yaml-yamllint
+        exclude: ^.config/alacritty/alacritty.yml$
