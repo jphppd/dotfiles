@@ -200,7 +200,7 @@ if &term ==? "xterm"
   set ttymouse=xterm2
 endif
 
-if &term ==? "alacritty"
+if &term =~ "alacritty"
   set t_Sb=^[4%dm
   set t_Sf=^[3%dm
   set ttymouse=sgr
@@ -242,6 +242,10 @@ map <C-t> :tabnew<CR>:E<CR>
 nnoremap <LEADER>nt :tabnew<CR>
 nnoremap <LEADER>h :tabprevious<CR>
 nnoremap <LEADER>l :tabnext<CR>
+
+" Speed up wheel scrolling
+map <ScrollWheelUp>   10<C-u>
+map <ScrollWheelDown> 10<C-d>
 
 " Clear search with comma + space
 nnoremap <LEADER><SPACE> :nohlsearch<CR>
