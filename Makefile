@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 
 ALACRITTY_DEPS = .config/alacritty/alacritty.yml
-BASH_DEPS = .bash_login .bash_logout .bashrc $(wildcard .local/lib/shell/*)
+BASH_DEPS = .bash_login .bash_logout .bashrc $(wildcard .local/lib/shell/*) $(wildcard .local/share/bash-completion/completions/*)
 BIN_DEPS = $(wildcard .local/bin/*)
 DEV_DEPS = .gdbinit $(wildcard .config/git/*)
 I3_DEPS = .xinitrc .config/i3status/config
