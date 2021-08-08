@@ -11,6 +11,7 @@ repos:
     rev: 0.0.10
     hooks:
       - id: git-forbid-binary
+        exclude: ^.terminfo/
       - id: git-check
       - id: git-dirty
       - id: git-check-added-large-files
