@@ -15,38 +15,34 @@ command_off = "sudo systemctl stop openvpn@sysnav.service"
 block = "net"
 interval = 1
 device = "wlp3s0"
-format = "{ssid} {signal_strength} {ip} {speed_down} {graph_down}"
-use_bits = true
-speed_digits = 2
+format = "{ssid} {signal_strength} {ip} {speed_down; M*_b}bps {graph_down;M} {speed_up; M*_b}bps {graph_up;M}"
+hide_inactive = true
 
 [[block]]
 block = "net"
 interval = 1
 device = "enp5s0"
-format = "{ip} {speed_down} {graph_down}"
-use_bits = true
-speed_digits = 2
+format = "{ip} @ {speed_down; K*_b}bps {graph_down;K} {speed_up; K*_b}bps {graph_up;K}"
+hide_inactive = true
 
 [[block]]
 block = "disk_space"
 interval = 10
 path = "/"
-alias = "/"
-format = "{icon}{alias} {available}{unit}"
+format = "{icon} {path} {available}"
 
 [[block]]
 block = "disk_space"
 interval = 10
 path = "/home"
-alias = "/home"
-format = "{icon}{alias} {available}{unit}"
+format = "{icon} {path} {available}"
 
 [[block]]
 block = "memory"
 interval = 5
 clickable = false
 display_type = "memory"
-format_mem = "{MApi}%"
+format_mem = "{mem_avail_percents:1}"
 
 [[block]]
 block = "cpu"
@@ -56,16 +52,17 @@ format = "{barchart} {utilization}"
 [[block]]
 block = "load"
 interval = 5
-format = "{1m}"
+format = "{1m}|{5m}|{15m}"
 
 [[block]]
 block = "battery"
 interval = 10
-critical = 10
+critical = 15
 warning = 30
 info = 60
-good = 95
-format = "{percentage}% {time}"
+good = 85
+full_threshold = 95
+format = "{time} {percentage}"
 
 [[block]]
 block = "backlight"
