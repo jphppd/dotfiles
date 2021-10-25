@@ -174,88 +174,164 @@ pretty_xml() {
 # Number conversions #
 ######################
 
+_pprint_in_number() {
+    print_args_or_stdin "$@" | tr 'a-f' 'A-F' | tr --delete " " | tr --delete "'" | perl -lape 's/0x//sg' | perl -lape 's/^0//'
+}
+
+_pprint_bin_number() {
+    print_args_or_stdin "$@" |
+    perl -lane 'use POSIX qw/ceil/; $width=8*ceil(length($_)/8); printf("%0${width}s", $_)' |
+    perl -lape "s/\d{8}\K(?=\d)/ /sg" |
+    perl -lape "s/\d{4}\K(?=\d)/'/sg"
+}
+
+_pprint_hex_number() {
+    print_args_or_stdin "$@" | tr 'A-F' 'a-f' |
+    perl -lane 'use POSIX qw/ceil/; $width=2*ceil(length($_)/2); printf("%0${width}s", $_)' |
+    perl -lape 's/([[:xdigit:]]{2})/0x$1 /sg; s/\s+$//'
+}
+
+_pprint_dec_number() {
+    print_args_or_stdin "$@" |
+    rev |
+    perl -lape "s/\d{3}\K(?=\d)/'/sg" |
+    rev
+}
+
+_pprint_oct_number(){
+    print_args_or_stdin "$@" | xargs -I {} echo "0{}"
+}
+
 hex2dec() {
     (
         echo 'obase=10;ibase=16'
-        (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
+        print_args_or_stdin "$@" | _pprint_in_number
     ) | bc --quiet
+}
+
+hex2dec-pp() {
+    print_args_or_stdin "$@" | hex2dec | _pprint_dec_number
 }
 
 hex2oct() {
     (
         echo 'obase=8;ibase=16'
-        (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
-    ) | bc --quiet | xargs -I{} echo "0{}"
+        print_args_or_stdin "$@" | _pprint_in_number
+    ) | bc --quiet
+}
+
+hex2oct-pp() {
+    print_args_or_stdin "$@" | hex2oct | _pprint_oct_number
 }
 
 hex2bin() {
     (
         echo 'obase=2;ibase=16'
-        (print_args_or_stdin "$@" | tr 'a-f' 'A-F' | sed 's/^0x//')
+        print_args_or_stdin "$@" | _pprint_in_number
     ) | bc --quiet
+}
+
+hex2bin-pp() {
+    print_args_or_stdin "$@" | hex2bin | _pprint_bin_number
 }
 
 dec2hex() {
     (
         echo 'obase=16;ibase=10'
-        print_args_or_stdin "$@"
-    ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
+        print_args_or_stdin "$@" | _pprint_in_number
+    ) | bc --quiet
+}
+
+dec2hex-pp() {
+    print_args_or_stdin "$@" | dec2hex | _pprint_hex_number
 }
 
 dec2oct() {
     (
         echo 'obase=8;ibase=10'
-        print_args_or_stdin "$@"
-    ) | bc --quiet | xargs -I{} echo "0{}"
+        print_args_or_stdin "$@" | _pprint_in_number
+    ) | bc --quiet
+}
+
+dec2oct-pp() {
+    print_args_or_stdin "$@" | dec2oct | _pprint_oct_number
 }
 
 dec2bin() {
     (
         echo 'obase=2;ibase=10'
-        print_args_or_stdin "$@"
+        print_args_or_stdin "$@" | _pprint_in_number
     ) | bc --quiet
+}
+
+dec2bin-pp() {
+    print_args_or_stdin "$@" | dec2bin | _pprint_bin_number
 }
 
 oct2hex() {
     (
         echo 'obase=16;ibase=8'
-        (print_args_or_stdin "$@" | sed 's/^0//')
-    ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
+        print_args_or_stdin "$@" | _pprint_in_number
+    ) | bc --quiet
+}
+
+oct2hex-pp()  {
+    print_args_or_stdin "$@" | oct2hex | _pprint_hex_number
 }
 
 oct2dec() {
     (
         echo 'obase=10;ibase=8'
-        (print_args_or_stdin "$@" | sed 's/^0//')
+        print_args_or_stdin "$@" | _pprint_in_number
     ) | bc --quiet
+}
+
+oct2dec-pp() {
+    print_args_or_stdin "$@" | oct2dec | _pprint_dec_number
 }
 
 oct2bin() {
     (
         echo 'obase=2;ibase=8'
-        (print_args_or_stdin "$@" | sed 's/^0//')
+        print_args_or_stdin "$@" | _pprint_in_number
     ) | bc --quiet
+}
+
+oct2bin-pp() {
+    print_args_or_stdin "$@" | oct2bin | _pprint_bin_number
 }
 
 bin2hex() {
     (
         echo 'obase=16;ibase=2'
-        print_args_or_stdin "$@"
-    ) | bc --quiet | xargs -I{} echo "0x{}" | tr 'A-F' 'a-f'
+        print_args_or_stdin "$@" | _pprint_in_number
+    ) | bc --quiet
+}
+
+bin2hex-pp() {
+    print_args_or_stdin "$@" | bin2hex | _pprint_hex_number
 }
 
 bin2dec() {
     (
         echo 'obase=10;ibase=2'
-        print_args_or_stdin "$@"
+        print_args_or_stdin "$@" | _pprint_in_number
     ) | bc --quiet
+}
+
+bin2dec-pp() {
+    print_args_or_stdin "$@" | bin2dec | _pprint_dec_number
 }
 
 bin2oct() {
     (
         echo 'obase=8;ibase=2'
-        print_args_or_stdin "$@"
-    ) | bc --quiet | xargs -I{} echo "0{}"
+        print_args_or_stdin "$@" | _pprint_in_number
+    ) | bc --quiet
+}
+
+bin2oct-pp() {
+    print_args_or_stdin "$@" | bin2oct | _pprint_oct_number
 }
 
 ##############
