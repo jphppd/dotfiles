@@ -155,8 +155,10 @@ client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 # Perso
 # =====
 
-# exec /usr/bin/urxvtd -q -f -o
-# exec /usr/bin/xrdb ~/.Xresources
+# https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec hash dbus-update-activation-environment 2>/dev/null && \
+     dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 exec swayidle -w \
      timeout 300 'swaylock --daemonize --show-failed-attempts --color=00356b' \
