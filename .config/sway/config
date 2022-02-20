@@ -139,7 +139,7 @@ bar {
    }
 }
 
-## Theme fonce
+## Color theme
 # Yale blue
 # Yale blue dark  00356B
 # Yale blue       286DC0
@@ -154,6 +154,16 @@ client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 
 # Perso
 # =====
+
+# Screenshots
+
+# Capture the specified screen area to clipboard, to file
+bindsym         Print exec screenshot -s
+bindsym Control+Print exec screenshot -s -f
+
+# Capture the focused window to clipboard, to file
+bindsym         Shift+Print exec screenshot
+bindsym Control+Shift+Print exec screenshot -f
 
 # https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
@@ -174,7 +184,7 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 5-
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5+
 
 bindsym $mod+q  exec pcmanfm
-bindsym $mod+b  exec /usr/bin/xdg-open http://www.google.fr
+bindsym $mod+b  exec xdg-open http://www.google.fr
 bindsym $mod+l  exec swaylock --color=00356b --show-failed-attempts
 
 bindsym $mod+m move scratchpad

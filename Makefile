@@ -2,17 +2,19 @@
 
 ALACRITTY_DEPS = .config/alacritty/alacritty.yml
 BASH_DEPS = .bash_login .bash_logout .bashrc $(wildcard .local/lib/shell/*) $(wildcard .local/share/bash-completion/*)
-BIN_DEPS = $(wildcard .local/bin/*)
+BIN_DEPS = .local/bin/asciitable .local/bin/colortable .local/bin/config-summary .local/bin/debian-purge-packages .local/bin/docker-purge .local/bin/docker-update .local/bin/dump-arch .local/bin/floatenc .local/bin/luksfile .local/bin/pastebin .local/bin/tab2space .local/bin/who-is-here
 DEV_DEPS = .gdbinit $(wildcard .config/git/*)
 SSH_DEPS = .ssh
-SWAY_DEPS = .config/sway/config $(wildcard .config/i3status-rust/*)
+DESKTOP_DEPS = .config/sway/config $(wildcard .config/i3status-rust/*)
+DESKTOP_BIN_DEPS = .local/bin/screenshot
+
 TERM_DEPS = .inputrc .tmux.conf .vimrc $(wildcard .terminfo/*)
 URXVT_DEPS = .Xresources
 
 skel.tar.gz: $(BASH_DEPS) $(BIN_DEPS) $(DEV_DEPS) $(SSH_DEPS) $(TERM_DEPS)
 	tar --create --gzip --file $@ $^
 
-desktop_skel.tar.gz:  $(ALACRITTY_DEPS) $(SWAY_DEPS) $(URXVT_DEPS)
+desktop_skel.tar.gz: $(ALACRITTY_DEPS) $(DESKTOP_DEPS) $(DESKTOP_BIN_DEPS) $(URXVT_DEPS)
 	tar --create --gzip --file $@ $^
 
 .PHONY: build

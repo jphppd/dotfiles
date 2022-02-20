@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Take a screenshot of either the current window, or a region of the wayland compositor
+# es grim, slurp, wl-clipboard, jq
+
+FILE=
+REGION=$(swaymsg -t get_tree | jq '.. | select(.type?) | select(.focused==true).rect | @text "\(.x),\(.y) \(.width)x\(.height)"' | tr --delete '"')
+
+while getopts "fsh" option; do
+    case "${option}" in
+        f)
+            FILE=$(date +"/tmp/%Y%m%dT%H%M%S_screenshot.png")
+            ;;
+        s)
+            REGION=$(slurp)
+            ;;
+        *)
+            echo "$(basename "$0") [-s] [-f]: take a screenshot of the current focused window and copy it to clipboard"
+            echo "-s: select a region in wayland compositor"
+            echo "-f: dump the screenshot in /tmp"
+            exit
+            ;;
+    esac
+done
+
+if [ -z "${FILE}" ]; then
+    grim -t png -g "${REGION}" - | wl-copy --type image/png
+else
+    grim -t png -g "${REGION}" "${FILE}"
+fi
