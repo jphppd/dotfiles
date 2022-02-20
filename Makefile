@@ -4,7 +4,6 @@ ALACRITTY_DEPS = .config/alacritty/alacritty.yml
 BASH_DEPS = .bash_login .bash_logout .bashrc $(wildcard .local/lib/shell/*) $(wildcard .local/share/bash-completion/*)
 BIN_DEPS = $(wildcard .local/bin/*)
 DEV_DEPS = .gdbinit $(wildcard .config/git/*)
-I3_DEPS = .xinitrc
 SSH_DEPS = .ssh
 SWAY_DEPS = .config/sway/config $(wildcard .config/i3status-rust/*)
 TERM_DEPS = .inputrc .tmux.conf .vimrc $(wildcard .terminfo/*)
@@ -13,7 +12,7 @@ URXVT_DEPS = .Xresources
 skel.tar.gz: $(BASH_DEPS) $(BIN_DEPS) $(DEV_DEPS) $(SSH_DEPS) $(TERM_DEPS)
 	tar --create --gzip --file $@ $^
 
-desktop_skel.tar.gz:  $(ALACRITTY_DEPS) $(I3_DEPS) $(SWAY_DEPS) $(URXVT_DEPS)
+desktop_skel.tar.gz:  $(ALACRITTY_DEPS) $(SWAY_DEPS) $(URXVT_DEPS)
 	tar --create --gzip --file $@ $^
 
 .PHONY: build
