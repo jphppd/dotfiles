@@ -23,6 +23,7 @@
 #
 # Print ASCII table, more exactly the current charset
 # More information about ASCII can be found in ascii(7) man page.
+# shellcheck disable=SC2028
 
 # Use alternate character set
 # Note: tput -Txterm smacs = \e(0 and tput -Txterm rmacs = \e(B
@@ -36,14 +37,14 @@ print_ascii() {
     for C in $(seq 0 15); do
         printf ' %X' "$C"
     done
-    printf '\n  -'
+    printf '\n  +'
     for C in $(seq 0 15); do
         printf '%s' '--'
     done
 
     # Print each line
-    for L in $(seq 0 16 255); do
-        printf '\n%02X:' "$L"
+    for L in $(seq 0 16 127); do
+        printf '\n%02X|' "$L"
         for C in $(seq 0 15); do
             # Convert ($L + $C) to octal
             if [ "$L" -lt 32 ]; then
@@ -64,7 +65,21 @@ print_ascii() {
             fi
         done
     done
-    printf '\n'
+    echo
+    echo
+    echo "0x00 = NUL = \0"
+    echo "0x03 = EOT = ^C = end of text"
+    echo "0x04 = EOT = ^D = end of transmission"
+    echo "0x07 = BEL = \a = bell"
+    echo "0x08 = BS  = \b = backspace"
+    echo "0x09 = HT  = \t = horizontal tab"
+    echo "0x10 = LF  = \n = line feed"
+    echo "0x11 = VT  = \v = vertical tab"
+    echo "0x12 = FF  = \f = form feed"
+    echo "0x13 = CR  = \r = carriage return"
+    echo "0x1B = ESC = \e = escape sequence"
+    echo "0x20 = SP  = ^[ = space"
+    echo "0x7F = DEL = ^? = delete"
 }
 
 while getopts ":ahl" OPT; do
