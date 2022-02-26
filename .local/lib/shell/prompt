@@ -64,7 +64,7 @@ __prompt_command() {
 
     # GIT
     if command -v git >/dev/null && command -v __git_ps1 >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
-        if [ -z "$(git status --porcelain)" ]; then
+        if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
             # Clean repo
             git="${green}\$(__git_ps1 '(%s)')${reset} "
         else
