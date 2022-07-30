@@ -59,6 +59,12 @@ if [[ "$(/usr/bin/id -u)" -eq 0 ]] && [[ -d "${homelocalsbin}" ]]; then
 fi
 unset homelocalsbin
 
+homecargobin="${REAL_HOME}/.cargo/bin"
+if [[ -d "${homecargobin}" ]]; then
+    export PATH="${homecargobin}:$PATH"
+fi
+unset homecargobin
+
 # Python configuration
 if [[ -r "${REAL_HOME}/.pythonrc" ]]; then
     export PYTHONSTARTUP="${REAL_HOME}/.pythonrc"
