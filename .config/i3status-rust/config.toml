@@ -22,7 +22,7 @@ hide_inactive = true
 block = "net"
 interval = 1
 device = "enp5s0"
-format = "{ip} @ {speed_down; K*_b}bps {graph_down;K} {speed_up; K*_b}bps {graph_up;K}"
+format = "{ip} {speed_down; K*_b}bps {graph_down;K} {speed_up; K*_b}bps {graph_up;K}"
 hide_inactive = true
 
 [[block]]
