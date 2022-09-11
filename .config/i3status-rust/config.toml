@@ -65,6 +65,13 @@ full_threshold = 95
 format = "{time} {percentage}"
 
 [[block]]
+block = "keyboard_layout"
+driver = "sway"
+[block.mappings]
+"French (alt.)" = "FR"
+"English (US, intl., with dead keys)" = "US"
+
+[[block]]
 block = "backlight"
 device = "amdgpu_bl0"
 

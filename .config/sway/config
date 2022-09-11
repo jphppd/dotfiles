@@ -1,8 +1,9 @@
 # Sway configuration
 
 input type:keyboard {
-    xkb_layout fr
-    xkb_variant oss
+    xkb_layout fr,us
+    xkb_variant oss,intl
+    xkb_options grp:alt_space_toggle
 }
 
 input type:touchpad {
