@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-ALACRITTY_DEPS = .config/alacritty/alacritty.yml
+ALACRITTY_DEPS = .config/alacritty/alacritty.toml
 BASH_DEPS = .bash_login .bash_logout .bashrc $(wildcard .local/lib/shell/*) $(wildcard .local/share/bash-completion/*)
 BIN_DEPS = .local/bin/asciitable .local/bin/colortable .local/bin/config-summary .local/bin/debian-purge-packages .local/bin/docker-purge .local/bin/docker-update .local/bin/dump-arch .local/bin/floatenc .local/bin/luksfile .local/bin/pastebin .local/bin/tab2space .local/bin/who-is-here
 DEV_DEPS = .gdbinit $(wildcard .config/git/*)
