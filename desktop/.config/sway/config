@@ -220,11 +220,11 @@ exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
 exec hash dbus-update-activation-environment 2>/dev/null && \
      dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
-exec swayidle -w \
-     timeout 300 'swaylock --daemonize --show-failed-attempts --color=00356b' \
-     timeout 600 'swaymsg "output * dpms off"' \
-          resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock --daemonize ---show-failed-attempts -color=00356b'
+#exec swayidle -w \
+#     timeout 300 'swaylock --daemonize --show-failed-attempts --color=00356b' \
+#     timeout 600 'swaymsg "output * dpms off"' \
+#          resume 'swaymsg "output * dpms on"' \
+#    before-sleep 'swaylock --daemonize ---show-failed-attempts -color=00356b'
 
 bindsym XF86AudioMute         exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioLowerVolume  exec pactl set-sink-volume @DEFAULT_SINK@ -10%
@@ -241,13 +241,11 @@ bindsym $mod+l  exec swaylock --color=00356b --show-failed-attempts
 bindsym $mod+m move scratchpad
 bindsym $mod+o scratchpad show
 
-# set $monitor1 eDP1
-# set $monitor2 HDMI1
-# set $monitor3 DP1
+#set $monitor2 eDP1
+#set $monitor1 DP-5
 #
-# output $monitor1 resolution 1920x1080 position 0,0
-# output $monitor2 resolution 1920x1080 position 1920,0
-# output $monitor3 resolution 1920x1080 position 3840,0
+#output $monitor1 resolution 1920x1080 position 0,0
+#output $monitor2 resolution 1920x1080 position 1920,0
 #
 # workspace 1 output $monitor1
 # workspace 2 output $monitor1
