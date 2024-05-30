@@ -1,0 +1,121 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+format = """
+[ ($username$hostname )](bg:blue1)\
+[\ue0b0](fg:blue1 bg:blue2)\
+[ $directory ](bg:blue2)\
+[\ue0b0](fg:blue2 bg:blue3)\
+[( $rust$python$nodejs$java$c$cmake)](bg:blue3)\
+[\ue0b0](fg:blue3 bg:blue4)\
+[( $git_branch$git_commit$git_state$git_status)](bg:blue4)\
+[\ue0b0](fg:blue4 bg:blue5)\
+[$package](bg:blue5)\
+[\ue0b0](fg:blue5 bg:blue6)\
+[$cmd_duration](fg:blue6)\
+[\ue0b0](fg:blue6)\
+$line_break\
+$status\
+$shlvl\
+$character
+"""
+
+add_newline = false
+palette = 'blue_shades'
+
+[palettes.blue_shades]
+blue1 = "#00356b"
+blue2 = "#174c8d"
+blue3 = "#215ea9"
+blue4 = "#286dc0"
+blue5 = "#4284d7"
+blue6 = "#5498ec"
+blue7 = "#63aaff"
+# red = "#bd5319"
+# green = "#5f712d"
+
+[username]
+show_always = true
+style_user = "bg:blue1 fg:blue4"
+style_root = "bg:blue1 fg:bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+ssh_symbol = " \uef4b"
+style = "bg:blue1"
+format = "[@]($style fg:blue6)[$hostname$ssh_symbol]($style)"
+
+[directory]
+style = "bg:blue2"
+read_only_style = "bg:blue2"
+before_repo_root_style = "bg:blue2 fg:blue5"
+repo_root_style = "bg:blue2"
+format = "[$read_only]($read_only_style)[$path]($style)"
+repo_root_format = "[$read_only]($read_only_style)[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = false
+
+[directory.substitutions]
+"Documents" = "󰈙"
+"Downloads" = " "
+"Music" = " "
+"Musique" = " "
+"Images" = " "
+"Pictures" = " "
+
+[git_branch]
+always_show_remote = true
+truncation_length = 24
+format = "$branch[( \ueb3a $remote_branch)](bg:blue4 fg:blue7) "
+
+[git_commit]
+tag_disabled = false
+tag_symbol = " \uf412 "
+style = "bg:blue4"
+format = "[($hash$tag )]($style)"
+
+[git_state]
+style = "bg:blue4 fg:bold"
+
+[git_status]
+style = "bg:blue4 fg:bold"
+format = "[($all_status$ahead_behind )]($style)"
+
+[package]
+format = " $symbol$version "
+
+[rust]
+format = "$symbol"
+
+[python]
+format = "$symbol(\\($virtualenv\\) )"
+
+[nodejs]
+format = "$symbol"
+
+[java]
+symbol = "☕"
+format = "$symbol"
+
+[c]
+symbol = " "
+format = "$symbol"
+
+[cmake]
+format = "$symbol"
+
+[cmd_duration]
+style = "bg:blue6"
+format = "[ \uf017 $duration ]($style)"
+
+[shlvl]
+disabled = false
+format = "$symbol"
+repeat = true
+symbol = "\u276f"
+repeat_offset = 1
+threshold = 0
+
+[status]
+disabled = false
