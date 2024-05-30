@@ -3,103 +3,103 @@
 
 export PROMPT_COMMAND=__prompt_command
 
-__prompt_width(){
-    local stripped_ps1
-    local stripped_expanded_ps1
+__prompt_width() {
+  local stripped_ps1
+  local stripped_expanded_ps1
 
-    # Remove \[...\] with non-greedy *? operator
-    stripped_ps1="$(echo -n "$1" | perl -pe 's|\\\[.*?\\\]||g')"
-    stripped_expanded_ps1="${stripped_ps1@P}"
-    echo -n "${#stripped_expanded_ps1}"
+  # Remove \[...\] with non-greedy *? operator
+  stripped_ps1="$(echo -n "$1" | perl -pe 's|\\\[.*?\\\]||g')"
+  stripped_expanded_ps1="${stripped_ps1@P}"
+  echo -n "${#stripped_expanded_ps1}"
 }
 
 __prompt_command() {
-    local exit_code="$?" # This needs to be first
-    local dollar="\\\$"
+  local exit_code="$?" # This needs to be first
+  local dollar="\\\$"
 
-    local reset='\[$(tput sgr0)\]'
-    local bold='\[$(tput bold)\]'
-    local red='\[$(tput setaf 1)\]'
-    local green='\[$(tput setaf 2)\]'
-    local yellow='\[$(tput setaf 3)\]'
-    local blue='\[$(tput setaf 4)\]'
-    local magenta='\[$(tput setaf 5)\]'
-    local cyan='\[$(tput setaf 6)\]'
-    local lightred='\[$(tput setaf 9)\]'
-    local lightcyan='\[$(tput setaf 14)\]'
+  local reset='\[$(tput sgr0)\]'
+  local bold='\[$(tput bold)\]'
+  local red='\[$(tput setaf 1)\]'
+  local green='\[$(tput setaf 2)\]'
+  local yellow='\[$(tput setaf 3)\]'
+  local blue='\[$(tput setaf 4)\]'
+  local magenta='\[$(tput setaf 5)\]'
+  local cyan='\[$(tput setaf 6)\]'
+  local lightred='\[$(tput setaf 9)\]'
+  local lightcyan='\[$(tput setaf 14)\]'
 
-    local exit_status="\[\]"
-    local user="\[\]"
-    local host="\[\]"
-    local dir="\[\]"
-    local git="\[\]"
-    local venv="\[\]"
-    local term_title="\[\]"
-    local trailing_sep="${dollar} "
-    local ps1=""
+  local exit_status="\[\]"
+  local user="\[\]"
+  local host="\[\]"
+  local dir="\[\]"
+  local git="\[\]"
+  local venv="\[\]"
+  local term_title="\[\]"
+  local trailing_sep="${dollar} "
+  local ps1=""
 
-    if [ "${exit_code}" != 0 ]; then
-        exit_status="[${bold}${red}${exit_code}${reset}]"
+  if [ "${exit_code}" != 0 ]; then
+    exit_status="[${bold}${red}${exit_code}${reset}]"
+  else
+    exit_status="[${green}${exit_code}${reset}]"
+  fi
+
+  if [ "$(id --user)" -eq 0 ]; then
+    user="${bold}${red}\u${reset}"
+  else
+    user="${blue}\u${reset}"
+  fi
+
+  if [ -z "${SSH_CLIENT}" ]; then
+    host="${cyan}\h${reset}"
+  else
+    if [ -z "${SSH_AUTH_SOCK}" ]; then
+      host="${lightcyan}\h${reset}"
     else
-        exit_status="[${green}${exit_code}${reset}]"
+      host="${lightcyan}\h(*)${reset}"
     fi
+  fi
 
-    if [ "$(id --user)" -eq 0 ]; then
-        user="${bold}${red}\u${reset}"
+  dir="${magenta}\w${reset} "
+
+  # GIT
+  if command -v git >/dev/null && command -v __git_ps1 >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
+    if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
+      # Clean repo
+      git="${green}\$(__git_ps1 '(%s)')${reset} "
     else
-        user="${blue}\u${reset}"
+      git="${red}\$(__git_ps1 '(%s)')${reset} "
     fi
+  fi
 
-    if [ -z "${SSH_CLIENT}" ]; then
-        host="${cyan}\h${reset}"
-    else
-        if [ -z "${SSH_AUTH_SOCK}" ]; then
-            host="${lightcyan}\h${reset}"
-        else
-            host="${lightcyan}\h(*)${reset}"
-        fi
-    fi
+  # Python virtualenv
+  if [ -n "${VIRTUAL_ENV}" ]; then
+    venv="${yellow}(venv:$(basename "${VIRTUAL_ENV}"))${reset} "
+  fi
 
-    dir="${magenta}\w${reset} "
+  # Concatenation des elements
+  ps1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}"
 
-    # GIT
-    if command -v git >/dev/null && command -v __git_ps1 >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
-        if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
-            # Clean repo
-            git="${green}\$(__git_ps1 '(%s)')${reset} "
-        else
-            git="${red}\$(__git_ps1 '(%s)')${reset} "
-        fi
-    fi
+  # # Newline if ps1 is too long with respect to term width
+  # local prompt_width
+  # local term_width
+  # prompt_width="$(__prompt_width "${ps1}")"
+  # term_width="$(tput cols)"
 
-    # Python virtualenv
-    if [ -n "${VIRTUAL_ENV}" ]; then
-        venv="${yellow}(venv:$(basename "${VIRTUAL_ENV}"))${reset} "
-    fi
+  # if (( "${prompt_width}" + 20 > "${term_width}" )); then
+  #   trailing_sep="\n${dollar} "
+  # else
+  #   trailing_sep="${dollar} "
+  # fi
 
-    # Concatenation des elements
-    ps1="${reset}${exit_status} ${user}@${host} ${dir}${git}${venv}"
+  # Set the title to user@host:dir
+  case "$TERM" in
+    xterm* | rxvt* | alacritty*)
+      term_title="\[\e]0;\u@\h: \w\a\]"
+      ;;
+  esac
 
-    # # Newline if ps1 is too long with respect to term width
-    # local prompt_width
-    # local term_width
-    # prompt_width="$(__prompt_width "${ps1}")"
-    # term_width="$(tput cols)"
-
-    # if (( "${prompt_width}" + 20 > "${term_width}" )); then
-    #   trailing_sep="\n${dollar} "
-    # else
-    #   trailing_sep="${dollar} "
-    # fi
-
-    # Set the title to user@host:dir
-    case "$TERM" in
-        xterm* | rxvt* | alacritty* )
-            term_title="\[\e]0;\u@\h: \w\a\]"
-            ;;
-    esac
-
-    PS1="${term_title}${ps1}${trailing_sep}"
+  PS1="${term_title}${ps1}${trailing_sep}"
 }
 
 export GIT_PS1_SHOWUNTRACKEDFILES=1
