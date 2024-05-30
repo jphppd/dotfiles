@@ -3,6 +3,9 @@
 #
 # executed by bash(1) for login-shells
 #
+if command -v fish >/dev/null; then
+  exec fish --login
+fi
 
 if [[ -f "${HOME}/.bashrc" ]] && [[ "$-" == *i* ]]; then
   source "${HOME}/.bashrc"

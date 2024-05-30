@@ -1,0 +1,1 @@
+alias chmod="chmod --changes"

@@ -1,0 +1,1 @@
+alias ltf="ll --tree"
