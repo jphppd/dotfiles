@@ -1,68 +1,47 @@
-icons = "awesome"
+icons_format = "{icon}"
 
 [theme]
-file = "custom_theme.toml"
+theme = "my_theme.toml"
 
-[[block]]
-block = "toggle"
-interval = 10
-text = "VPN"
-command_state = "ls -A /run/openvpn/*pid 2>/dev/null"
-command_on = "sudo systemctl restart openvpn@sysnav.service"
-command_off = "sudo systemctl stop openvpn@sysnav.service"
+[icons]
+icons = "my_icons.toml"
 
 [[block]]
 block = "net"
-interval = 1
-device = "wlp3s0"
-format = "{ssid} {signal_strength} {ip} {speed_down; K*_b}bps {graph_down;K} {speed_up; K*_b}bps {graph_up;K}"
-hide_inactive = true
-
-[[block]]
-block = "net"
-interval = 1
-device = "enp5s0"
-format = "{ip} {speed_down; K*_b}bps {graph_down;K} {speed_up; K*_b}bps {graph_up;K}"
-hide_inactive = true
+format = "$icon  $device {$ssid $signal_strength |}$ip ^icon_net_down$speed_down.eng(unit:b,prefix:K,hide_unit:true,width:4)bps $graph_down ^icon_net_up$speed_up.eng(unit:b,prefix:K,hide_unit:true,width:4)bps $graph_up"
 
 [[block]]
 block = "disk_space"
-interval = 10
 path = "/"
-format = "{icon} {path} {available}"
+warning = 5
+alert = 1
+alert_unit = "GB"
+format = "$icon $path $available"
 
 [[block]]
 block = "disk_space"
-interval = 10
 path = "/home"
-format = "{icon} {path} {available}"
+warning = 5
+alert = 1
+alert_unit = "GB"
+format = "$icon $path $available"
 
 [[block]]
 block = "cpu"
-interval = 2
-format = "{barchart} {utilization}"
+format = "$barchart$utilization"
 
 [[block]]
 block = "load"
-interval = 5
-format = "{1m}|{5m}|{15m}"
+format = "$icon  $1m.eng(width:3) $5m.eng(width:3) $15m.eng(width:3)"
 
 [[block]]
 block = "memory"
-interval = 5
-clickable = false
-display_type = "memory"
-format_mem = "{mem_avail_percents:1}"
+format = "$icon $mem_avail_percents"
 
 [[block]]
 block = "battery"
-interval = 10
-critical = 15
-warning = 30
-info = 60
 good = 85
-full_threshold = 95
-format = "{time} {percentage}"
+format = "$icon $time $percentage"
 
 [[block]]
 block = "keyboard_layout"
@@ -81,4 +60,4 @@ block = "sound"
 [[block]]
 block = "time"
 interval = 1
-format = "%a %Y-%m-%d %H:%M:%S W%V"
+format = "$timestamp.datetime(f:'%a %Y-%m-%d %H:%M:%S W%V')"
