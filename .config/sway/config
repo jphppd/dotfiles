@@ -28,8 +28,6 @@ font pango:DejaVu Sans Mono, FontAwesome 9
 floating_modifier $mod normal
 
 # start a terminal
-# bindsym $mod+Return       exec "/usr/bin/urxvtc"
-# bindsym $mod+Shift+Return exec "/usr/bin/urxvtc -e ranger"
 bindsym $mod+Return       exec "$term"
 bindsym $mod+Shift+Return exec "$term -e ranger"
 
