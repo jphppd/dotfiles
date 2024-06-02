@@ -30,9 +30,11 @@ floating_modifier $mod normal
 # start a terminal
 bindsym $mod+Return       exec "$term"
 bindsym $mod+Shift+Return exec "$term -e ranger"
+bindsym $mod+Control+Return exec "$term -e ranger"
 
 # kill focused window
 bindsym $mod+Shift+q kill
+bindsym $mod+Control+q kill
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -89,6 +91,17 @@ bindsym $mod+underscore workspace 8
 bindsym $mod+ccedilla   workspace 9
 bindsym $mod+agrave     workspace 10
 
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
+bindsym $mod+6 workspace 6
+bindsym $mod+7 workspace 7
+bindsym $mod+8 workspace 8
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
+
 # move focused container to workspace
 bindsym $mod+Shift+ampersand  move container to workspace 1
 bindsym $mod+Shift+eacute     move container to workspace 2
@@ -100,6 +113,39 @@ bindsym $mod+Shift+egrave     move container to workspace 7
 bindsym $mod+Shift+underscore move container to workspace 8
 bindsym $mod+Shift+ccedilla   move container to workspace 9
 bindsym $mod+Shift+agrave     move container to workspace 10
+
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
+bindsym $mod+Shift+6 move container to workspace 6
+bindsym $mod+Shift+7 move container to workspace 7
+bindsym $mod+Shift+8 move container to workspace 8
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
+
+bindsym $mod+Control+ampersand  move container to workspace 1
+bindsym $mod+Control+eacute     move container to workspace 2
+bindsym $mod+Control+quotedbl   move container to workspace 3
+bindsym $mod+Control+apostrophe move container to workspace 4
+bindsym $mod+Control+parenleft  move container to workspace 5
+bindsym $mod+Control+minus      move container to workspace 6
+bindsym $mod+Control+egrave     move container to workspace 7
+bindsym $mod+Control+underscore move container to workspace 8
+bindsym $mod+Control+ccedilla   move container to workspace 9
+bindsym $mod+Control+agrave     move container to workspace 10
+
+bindsym $mod+Control+1 move container to workspace 1
+bindsym $mod+Control+2 move container to workspace 2
+bindsym $mod+Control+3 move container to workspace 3
+bindsym $mod+Control+4 move container to workspace 4
+bindsym $mod+Control+5 move container to workspace 5
+bindsym $mod+Control+6 move container to workspace 6
+bindsym $mod+Control+7 move container to workspace 7
+bindsym $mod+Control+8 move container to workspace 8
+bindsym $mod+Control+9 move container to workspace 9
+bindsym $mod+Control+0 move container to workspace 10
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -188,7 +234,8 @@ bindsym XF86MonBrightnessDown exec brightnessctl set 5-
 bindsym XF86MonBrightnessUp   exec brightnessctl set 5+
 
 bindsym $mod+q  exec pcmanfm
-bindsym $mod+b  exec xdg-open http://www.google.fr
+bindsym $mod+b  exec xdg-open https://www.google.fr
+bindsym $mod+t  exec xdg-open https://www.google.fr
 bindsym $mod+l  exec swaylock --color=00356b --show-failed-attempts
 
 bindsym $mod+m move scratchpad
