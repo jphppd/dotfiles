@@ -1,62 +1,65 @@
 [alias]
-    st = status --branch --short
-    df = diff
-    dc = diff --cached
-    wdf = diff --word-diff=color --unified=1
-    wdc = diff --word-diff=color --unified=1 --cached
-    g = grep --break --heading --line-number
+  st = status --branch --short
+  df = diff
+  dc = diff --cached
+  wdf = diff --word-diff=color --unified=1
+  wdc = diff --word-diff=color --unified=1 --cached
+  g = grep --break --heading --line-number
 
-    ls = "!git status -suno"
-    ls-modified = "!git status --porcelain -uno | awk 'match($1, /M/) {print $2}'"
-    ls-added = "!git status --porcelain -uno | awk 'match($1, /A/) {print $2}'"
-    ls-deleted = "!git status --porcelain -uno | awk 'match($1, /D/) {print $2}'"
-    ls-renamed = "!git status --porcelain -uno | awk 'match($1, /R/) {print $2}'"
-    ls-copied = "!git status --porcelain -uno | awk 'match($1, /C/) {print $2}'"
-    ls-updated = "!git status --porcelain -uno | awk 'match($1, /U/) {print $2}'"
-    ls-staged = "!git status --porcelain -uno | grep -P '^[MA]' | awk '{ print $2 }'"
-    ls-untracked = "!git status --porcelain -uall | awk '$1 == \"??\" {print $2}'"
-    ls-ignored = ls-files --ignored --others --exclude-standard
+  ls = "!git status -suno"
+  ls-modified = "!git status --porcelain -uno | awk 'match($1, /M/) {print $2}'"
+  ls-added = "!git status --porcelain -uno | awk 'match($1, /A/) {print $2}'"
+  ls-deleted = "!git status --porcelain -uno | awk 'match($1, /D/) {print $2}'"
+  ls-renamed = "!git status --porcelain -uno | awk 'match($1, /R/) {print $2}'"
+  ls-copied = "!git status --porcelain -uno | awk 'match($1, /C/) {print $2}'"
+  ls-updated = "!git status --porcelain -uno | awk 'match($1, /U/) {print $2}'"
+  ls-staged = "!git status --porcelain -uno | grep -P '^[MA]' | awk '{ print $2 }'"
+  ls-untracked = "!git status --porcelain -uall | awk '$1 == \"??\" {print $2}'"
+  ls-ignored = ls-files --ignored --others --exclude-standard
 
-    lg = !"git lg1"
-    lg1 = !"git lg-fmt-1 --graph --topo-order --abbrev-commit --decorate=full --all"
-    lg2 = !"git lg-fmt-2 --graph --topo-order --abbrev-commit --decorate=full --all --stat"
-    lg-no-graph = !"git lg-fmt-1 --abbrev-commit --decorate=full"
+  lg = !"git lg1"
+  lg1 = !"git lg-fmt-1 --graph --topo-order --abbrev-commit --decorate=full --all"
+  lg2 = !"git lg-fmt-2 --graph --topo-order --abbrev-commit --decorate=full --all --stat"
+  lg-no-graph = !"git lg-fmt-1 --abbrev-commit --decorate=full"
 
-    lg-fmt-1 = log --format=format:'%Cred%h%Creset %Cgreen(%ar)%Creset%C(auto)%d%Creset %C(bold)%s%Creset %Cblue%C(bold)%an%Creset'
-    lg-fmt-2 = log --format=format:'─┬─ %Cred%h%Creset %Cgreen(%aI, %ar)%Creset%C(auto)%d%Creset%n └─ %C(bold)%s%Creset %Cblue%C(bold)%an%Creset%n'
+  lg-fmt-1 = log --format=format:'%Cred%h%Creset %Cgreen(%ar)%Creset%C(auto)%d%Creset %C(bold)%s%Creset %Cblue%C(bold)%an%Creset'
+  lg-fmt-2 = log --format=format:'─┬─ %Cred%h%Creset %Cgreen(%aI, %ar)%Creset%C(auto)%d%Creset%n └─ %C(bold)%s%Creset %Cblue%C(bold)%an%Creset%n'
 
-    sdiff = !git diff && git submodule foreach 'git diff'
-    spush = push --recurse-submodules=on-demand
-    supdate = submodule update --remote --rebase
+  sdiff = !git diff && git submodule foreach 'git diff'
+  spush = push --recurse-submodules=on-demand
+  supdate = submodule update --remote --rebase
 
 [branch]
-    autoSetupMerge = true
-    autoSetupRebase = always
+  autoSetupMerge = true
+  autoSetupRebase = always
 
 [color]
-    branch = auto
-    diff = auto
-    interactive = auto
-    status = auto
-    ui = auto
+  branch = auto
+  diff = auto
+  interactive = auto
+  status = auto
+  ui = auto
 
 [core]
-    excludesFile = ~/.config/git/ignore
-    pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
-    autocrlf = input
+  excludesFile = ~/.config/git/ignore
+  pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
+  autocrlf = input
 
 [include]
-    path = ~/.config/git/credentials
+  path = ~/.config/git/credentials
 
 [init]
-    templateDir = ~/.config/git/template
+  templateDir = ~/.config/git/template
 
 [merge]
-    tool = vimdiff
-    ff = ff-only
+  tool = vimdiff
+  ff = ff-only
 
 [push]
-    default = simple
+  default = simple
+
+[rerere]
+	enabled = true
 
 [status]
-    submodulesummary = 1
+  submodulesummary = 1
