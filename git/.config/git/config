@@ -48,9 +48,6 @@
 [include]
   path = ~/.config/git/credentials
 
-[init]
-  templateDir = ~/.config/git/template
-
 [merge]
   tool = vimdiff
   ff = ff-only
