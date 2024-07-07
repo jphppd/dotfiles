@@ -42,13 +42,24 @@
 
 [core]
   excludesFile = ~/.config/git/ignore
-  pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
+  pager = delta
   autocrlf = input
+
+[delta]
+  line-numbers = true
+  navigate = true
+
+[diff]
+  colorMoved = default
 
 [include]
   path = ~/.config/git/credentials
 
+[interactive]
+  diffFilter = delta --color-only
+
 [merge]
+  conflictstyle = diff3
   tool = vimdiff
   ff = ff-only
 

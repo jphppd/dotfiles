@@ -9,6 +9,7 @@ if status is-interactive
     _check_cargo_install bat bat
     _check_cargo_install eza eza
     _check_cargo_install fd fd-find
+    _check_cargo_install delta git-delta
     _check_cargo_install rg ripgrep
     _check_cargo_install starship starship
     _check_cargo_install yazi yazi-fm yazi-cli
