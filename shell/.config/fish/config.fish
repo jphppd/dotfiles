@@ -67,7 +67,9 @@ if status is-login
     if ! fish_is_root_user && test -z $DISPLAY
         set current_tty (tty)
         if test $current_tty = /dev/tty1
-            if test -x /usr/bin/sway
+            if test -x /usr/bin/hyprland
+                exec /usr/bin/hyprland
+            else if test -x /usr/bin/sway
                 exec /usr/bin/sway
             else if test -x /usr/bin/startx
                 exec /usr/bin/startx

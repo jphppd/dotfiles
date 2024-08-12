@@ -1,0 +1,199 @@
+{
+  "layer": "top",
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-right": [
+    "network",
+    "cpu",
+    "memory",
+    "battery",
+    "backlight",
+    "pulseaudio",
+    "clock"
+  ],
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+    "all-outputs": true,
+    "persistent_workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": [],
+      "6": [],
+      "7": [],
+      "8": [],
+      "9": [],
+      "10": []
+    },
+    "format-icons": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "10"
+    }
+  },
+  "clock": {
+    "interval": 1,
+    "format": "\uf017  {:%Y-%m-%d %H:%M:%S W%V}", // nf-fa-clock
+    "tooltip-format": "<big>{:%B}</big>\n<tt><small>{calendar}</small></tt>"
+  },
+  "backlight": {
+    "device": "amdgpu_b10",
+    "format": "{icon} {percent:>3}%",
+    "format-icons": [
+      "\ue3d5", // nf-weather-moon-alt_full
+      "\ue3d4", // nf-weather-moon-alt_waxing_gibbous_6
+      "\ue3d3", // nf-weather-moon-alt_waxing_gibbous_5
+      "\ue3d2", // nf-weather-moon-alt_waxing_gibbous_4
+      "\ue3d1", // nf-weather-moon-alt_waxing_gibbous_3
+      "\ue3d0", // nf-weather-moon-alt_waxing_gibbous_2
+      "\ue3cf", // nf-weather-moon-alt_waxing_gibbous_1
+      "\ue3ce", // nf-weather-moon_alt_first_quarter
+      "\ue3cd", // nf-weather-moon_alt_waxing_crescent_6
+      "\ue3cc", // nf-weather-moon_alt_waxing_crescent_5
+      "\ue3cb", // nf-weather-moon_alt_waxing_crescent_4
+      "\ue3ca", // nf-weather-moon_alt_waxing_crescent_3
+      "\ue3c9", // nf-weather-moon_alt_waxing_crescent_2
+      "\ue3c8", // nf-weather-moon_alt_waxing_crescent_1
+      "\ue3e3" // nf-weather-moon_alt_new
+    ]
+  },
+  "network": {
+    "interval": 2,
+    "format": "{ifname}",
+    "format-wifi": "<span color='#c0caf5'>\udb81\udda9  {essid} {signaldBm}dBm </span>{icon} <span color='#c0caf5'>{bandwidthDownBits:>8} \udb80\uddda {bandwidthUpBits:>8} \udb81\udd52</span>", // nf-md-wifi
+    "format-ethernet": "<span color=#c0caf5'>\udb80\ude00 {bandwidthDownBits:>8} \udb80\uddda {bandwidthUpBits:>8} \udb81\udd52</span>", // nf-md-ethernet
+    "format-disconnected": "<span color=#c0caf5'>\udb81\uddaa </span>No Network", // nf-md-wifi_off
+    "on-click": "alacritty --command nmtui",
+    "format-icons": [
+      "\u2581",
+      "\u2582",
+      "\u2583",
+      "\u2584",
+      "\u2585",
+      "\u2586",
+      "\u2587",
+      "\u2588"
+    ],
+    "states": {
+      "pct0": 0,
+      "pct10": 10,
+      "pct20": 20,
+      "pct30": 30,
+      "pct40": 40,
+      "pct50": 50,
+      "pct60": 60,
+      "pct70": 70,
+      "pct80": 80,
+      "pct90": 90,
+      "pct100": 100
+    }
+  },
+  "battery": {
+    "interval": 5,
+    "full-at": 97,
+    "format-time": "{H}h{M}m",
+    "format-discharging": "<span color='#c0caf5'>\udb80\udc79 {capacity}% {time:>5}</span> {icon}", // nf-md-battery
+    "format-charging": "<span color='#c0caf5'>\udb80\udc84 {capacity}%</span> {icon}", // nf-md-battery_charging
+    "format-plugged": "<span color='#c0caf5'>\uf1e6 {capacity}%</span> {icon}", // nf-fa-plug
+    "format-icons": [
+      "\u2581",
+      "\u2582",
+      "\u2583",
+      "\u2584",
+      "\u2585",
+      "\u2586",
+      "\u2587",
+      "\u2588"
+    ],
+    "states": {
+      "pct0": 0,
+      "pct10": 10,
+      "pct20": 20,
+      "pct30": 30,
+      "pct40": 40,
+      "pct50": 50,
+      "pct60": 60,
+      "pct70": 70,
+      "pct80": 80,
+      "pct90": 90,
+      "pct100": 100
+    }
+  },
+  "pulseaudio": {
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-click-right": "pavucontrol",
+    "format": "{icon}  {volume:>3}%",
+    "format-muted": "\ueee8      ", // nf-fa-volume_xmark
+    "format-icons": [
+      "\uf026", // nf-fa-volume_off
+      "\uf027", // nf-fa-volume_low
+      "\uf028" // nf-fa-volume_high
+    ]
+  },
+  "memory": {
+    "interval": 2,
+    "on-click": "alacritty --command htop",
+    "format": "<span color='#c0caf5'>\uefc5  {:>2}%</span> {icon}",
+    "format-icons": [
+      "\u2581",
+      "\u2582",
+      "\u2583",
+      "\u2584",
+      "\u2585",
+      "\u2586",
+      "\u2587",
+      "\u2588"
+    ],
+    "states": {
+      "pct0": 0,
+      "pct10": 10,
+      "pct20": 20,
+      "pct30": 30,
+      "pct40": 40,
+      "pct50": 50,
+      "pct60": 60,
+      "pct70": 70,
+      "pct80": 80,
+      "pct90": 90,
+      "pct100": 100
+    }
+  },
+  "cpu": {
+    "interval": 2,
+    "on-click": "alacritty --command htop",
+    "format": "<span color='#c0caf5'>\udb80\udf5b {load:>5} {avg_frequency:>4}GHz {usage:>3}%</span> {icon}",
+    "format-icons": [
+      "\u2581",
+      "\u2582",
+      "\u2583",
+      "\u2584",
+      "\u2585",
+      "\u2586",
+      "\u2587",
+      "\u2588"
+    ],
+    "states": {
+      "pct0": 0,
+      "pct10": 10,
+      "pct20": 20,
+      "pct30": 30,
+      "pct40": 40,
+      "pct50": 50,
+      "pct60": 60,
+      "pct70": 70,
+      "pct80": 80,
+      "pct90": 90,
+      "pct100": 100
+    }
+  }
+}

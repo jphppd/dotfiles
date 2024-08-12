@@ -1,0 +1,94 @@
+* {
+  border: none;
+  font-family: 'DejaVuSansM Nerd Font' , 'Symbols Only';
+  font-size: 12px;
+  font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
+}
+
+window#waybar {
+  background: transparent;
+}
+
+#workspaces {
+  margin-top: 5px;
+	margin-left: 5px;
+}
+
+#workspaces button {
+  border: 2px solid rgba(40, 109, 192, 0.5);
+  background: #00356b;
+  color: #ffffff;
+  margin-right: 5px;
+}
+
+#workspaces button.active {
+  border: 2px solid #ffffff;
+}
+
+#clock,#backlight,#temperature,#cpu,#pulseaudio,#network,#battery,#memory {
+  border-radius: 5px;
+  background-color: rgba(25,26,36,0.3);
+  color: #c0caf5;
+  margin-top: 5px;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-right: 5px;
+}
+
+#memory.pct0,#cpu.pct0,#battery.pct100,#network.pct100{
+  color: #3fa027;
+}
+#memory.pct10,#cpu.pct10,#battery.pct90,#network.pct90{
+  color: #65ae0e;
+}
+#memory.pct20,#cpu.pct20,#battery.pct80,#network.pct80{
+  color: #91b815;
+}
+#memory.pct30,#cpu.pct30,#battery.pct70,#network.pct70{
+  color: #b9c21b;
+}
+#memory.pct40,#cpu.pct40,#battery.pct60,#network.pct60{
+  color: #deca22;
+}
+#memory.pct50,#cpu.pct50,#battery.pct50,#network.pct50{
+  color: #fbc722;
+}
+#memory.pct60,#cpu.pct60,#battery.pct40,#network.pct40{
+  color: #ffaf18;
+}
+#memory.pct70,#cpu.pct70,#battery.pct30,#network.pct30{
+  color: #ff950b;
+}
+#memory.pct80,#cpu.pct80,#battery.pct20,#network.pct20{
+  color: #ff7900;
+}
+#memory.pct90,#cpu.pct90,#battery.pct10,#network.pct10{
+  color: #ff5900;
+}
+#memory.pct100,#cpu.pct100,#battery.pct0,#network.pct0{
+  color: #ff2a00;
+}
+
+@keyframes blink {
+  to {
+    background-color: rgba(25,26,36,1);
+  }
+}
+
+#battery.pct10:not(.plugged) {
+  background: #ff0000;
+  animation-name: blink;
+  animation-duration: 0.3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#battery.pct20:not(.plugged) {
+  background: #660000;
+  animation-name: blink;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}

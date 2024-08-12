@@ -29,8 +29,6 @@ floating_modifier $mod normal
 
 # start a terminal
 bindsym $mod+Return       exec "$term"
-bindsym $mod+Shift+Return exec "$term -e ranger"
-bindsym $mod+Control+Return exec "$term -e ranger"
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -217,8 +215,6 @@ bindsym Control+Shift+Print exec screenshot -f
 
 # https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
-exec hash dbus-update-activation-environment 2>/dev/null && \
-     dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 #exec swayidle -w \
 #     timeout 300 'swaylock --daemonize --show-failed-attempts --color=00356b' \
@@ -226,12 +222,12 @@ exec hash dbus-update-activation-environment 2>/dev/null && \
 #          resume 'swaymsg "output * dpms on"' \
 #    before-sleep 'swaylock --daemonize ---show-failed-attempts -color=00356b'
 
-bindsym XF86AudioMute         exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioLowerVolume  exec pactl set-sink-volume @DEFAULT_SINK@ -10%
-bindsym XF86AudioRaiseVolume  exec pactl set-sink-volume @DEFAULT_SINK@ +10%
+bindsym XF86AudioMute         exec wpctl set-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioLowerVolume  exec wpctl set-volume @DEFAULT_SINK@ 10%-
+bindsym XF86AudioRaiseVolume  exec wpctl set-volume @DEFAULT_SINK@ 10%+
 
-bindsym XF86MonBrightnessDown exec brightnessctl set 5-
-bindsym XF86MonBrightnessUp   exec brightnessctl set 5+
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
+bindsym XF86MonBrightnessUp   exec brightnessctl set 10%+
 
 bindsym $mod+q  exec pcmanfm
 bindsym $mod+b  exec xdg-open https://www.google.fr
