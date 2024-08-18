@@ -7,13 +7,14 @@ if status is-interactive
 
     # Suggest to install misc cli utils
     _check_cargo_install bat bat
+    _check_cargo_install difft difftastic
     _check_cargo_install dust du-dust
     _check_cargo_install eza eza
     _check_cargo_install fd fd-find
-    _check_cargo_install delta git-delta
+    _check_cargo_install fend fend
+    _check_cargo_install pastel pastel
     _check_cargo_install rg ripgrep
     _check_cargo_install starship starship
-    _check_cargo_install yazi yazi-fm yazi-cli
     _check_cargo_install zoxide zoxide
 
     # Set env variables

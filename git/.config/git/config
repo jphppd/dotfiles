@@ -5,6 +5,7 @@
   wdf = diff --word-diff=color --unified=1
   wdc = diff --word-diff=color --unified=1 --cached
   g = grep --break --heading --line-number
+  show = show --ext-diff
 
   ls = "!git status -suno"
   ls-modified = "!git status --porcelain -uno | awk 'match($1, /M/) {print $2}'"
@@ -42,21 +43,14 @@
 
 [core]
   excludesFile = ~/.config/git/ignore
-  pager = delta
   autocrlf = input
-
-[delta]
-  line-numbers = true
-  navigate = true
+  pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
 
 [diff]
-  colorMoved = default
+  external = difft
 
 [include]
   path = ~/.config/git/credentials
-
-[interactive]
-  diffFilter = delta --color-only
 
 [merge]
   conflictstyle = diff3

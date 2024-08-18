@@ -113,7 +113,7 @@ multiplier = 10
 save_to_clipboard = true
 
 [shell]
-program = "/usr/bin/fish"
+program = "fish"
 
 [window]
 decorations = "full"
