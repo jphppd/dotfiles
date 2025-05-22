@@ -7,21 +7,22 @@ if status is-interactive
 
     # Suggest to install misc cli utils
     _check_cargo_install bat bat
+    _check_cargo_install czkawka_cli czkawka_cli
     _check_cargo_install difft difftastic
     _check_cargo_install dust du-dust
     _check_cargo_install eza eza
     _check_cargo_install fd fd-find
     _check_cargo_install fend fend
+    _check_cargo_install grex grex
+    _check_cargo_install hx hx
     _check_cargo_install pastel pastel
     _check_cargo_install rg ripgrep
+    _check_cargo_install sk skim
     _check_cargo_install starship starship
     _check_cargo_install zoxide zoxide
 
     # Set env variables
-    if command --quiet nvim
-        alias vim=nvim
-        set --export --universal EDITOR nvim
-    else if command --quiet nvim
+    if command --quiet vim
         set --export --universal EDITOR vim
     end
 
@@ -29,16 +30,13 @@ if status is-interactive
         set --export --universal EZA_COLORS "ur=0:uw=0:ux=0:ue=0:gr=0:gw=0:gx=0:tr=0:tw=0:tx=0:uu=0:gu=0:lc=31:lm=31;1"
     end
 
-    if command --quiet most
-        set --export --universal MANPAGER most
-        set --export --universal MANROFFOPT -c
-    end
-
     if command --quiet less
         set --export --universal LESS --RAW-CONTROL-CHARS
         set --export --universal LESSCOLOR yes
-        set --export --universal PAGER less
         set --export --universal LESSHISTFILE /dev/null
+        set --export --universal PAGER less
+        set --export --universal MANPAGER less
+        set --export --universal MANROFFOPT -c
     end
 
     if command --quiet lesspipe
@@ -47,10 +45,6 @@ if status is-interactive
     end
 
     # Source misc. config
-    if command --quiet fzf
-        fzf --fish | source
-    end
-
     if command --quiet starship
         starship init fish | source
     end

@@ -83,15 +83,23 @@ style = "bg:blue4 fg:bold"
 format = "[($all_status$ahead_behind )]($style)"
 
 [package]
+# nf-cod-package
+symbol = "📦 "
 format = " $symbol$version "
 
 [rust]
+# nf-linux-ferris
+symbol = "🦀 "
 format = "$symbol"
 
 [python]
+# nf-cod-snake
+symbol = "🐍 "
 format = "$symbol(\\($virtualenv\\) )"
 
 [nodejs]
+# nf-fa-node_js
+symbol = "\ued0d "
 format = "$symbol"
 
 [java]
