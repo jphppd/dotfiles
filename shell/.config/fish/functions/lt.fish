@@ -1,1 +1,1 @@
-alias lt="ll --tree --level=3"
+alias lt="ll --tree"
