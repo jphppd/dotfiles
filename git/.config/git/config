@@ -5,6 +5,7 @@
   wdf = diff --word-diff=color --unified=1
   wdc = diff --word-diff=color --unified=1 --cached
   g = grep --break --heading --line-number
+  h = reflog --date=iso
   show = show --ext-diff
 
   ls = "!git status -suno"
