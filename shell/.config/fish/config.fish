@@ -16,6 +16,7 @@ if status is-interactive
     _check_cargo_install grex grex
     _check_cargo_install hx hx
     _check_cargo_install pastel pastel
+    _check_cargo_install prek prek
     _check_cargo_install rg ripgrep
     _check_cargo_install sk skim
     _check_cargo_install starship starship
