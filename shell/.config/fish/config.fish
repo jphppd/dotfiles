@@ -7,6 +7,7 @@ if status is-interactive
 
     # Suggest to install misc cli utils
     _check_cargo_install bat bat
+    _check_cargo_install binsider binsider
     _check_cargo_install czkawka_cli czkawka_cli
     _check_cargo_install difft difftastic
     _check_cargo_install dust du-dust
