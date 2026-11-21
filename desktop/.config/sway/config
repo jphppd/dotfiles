@@ -7,7 +7,8 @@ input type:keyboard {
 }
 
 input type:touchpad {
-    pointer_accel 0.55
+    pointer_accel 0.6
+    scroll_factor 2.5
     accel_profile adaptive
 }
 
@@ -204,14 +205,8 @@ client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 # =====
 
 # Screenshots
-
-# Capture the specified screen area to clipboard, to file
-bindsym         Print exec screenshot -s
-bindsym Control+Print exec screenshot -s -f
-
-# Capture the focused window to clipboard, to file
-bindsym         Shift+Print exec screenshot
-bindsym Control+Shift+Print exec screenshot -f
+bindsym         Print exec grim -g "$(slurp)" - | wl-copy
+#bindsym         Print exec flameshot gui
 
 # https://github.com/swaywm/sway/wiki#gtk-applications-take-20-seconds-to-start
 exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
@@ -221,6 +216,8 @@ exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
 #     timeout 600 'swaymsg "output * dpms off"' \
 #          resume 'swaymsg "output * dpms on"' \
 #    before-sleep 'swaylock --daemonize ---show-failed-attempts -color=00356b'
+exec swayidle -w timeout 600 'systemctl suspend'
+bindsym $mod+Shift+s exec systemctl suspend
 
 bindsym XF86AudioMute         exec wpctl set-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioLowerVolume  exec wpctl set-volume @DEFAULT_SINK@ 10%-
