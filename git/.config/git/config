@@ -1,28 +1,17 @@
 [alias]
   st = status --branch --short
+  ls = status --short --untracked-files=no
   df = diff
   dc = diff --cached
   wdf = diff --word-diff=color --unified=1
   wdc = diff --word-diff=color --unified=1 --cached
   g = grep --break --heading --line-number
   h = reflog --date=iso
-  show = show --ext-diff
 
-  ls = "!git status -suno"
-  ls-modified = "!git status --porcelain -uno | awk 'match($1, /M/) {print $2}'"
-  ls-added = "!git status --porcelain -uno | awk 'match($1, /A/) {print $2}'"
-  ls-deleted = "!git status --porcelain -uno | awk 'match($1, /D/) {print $2}'"
-  ls-renamed = "!git status --porcelain -uno | awk 'match($1, /R/) {print $2}'"
-  ls-copied = "!git status --porcelain -uno | awk 'match($1, /C/) {print $2}'"
-  ls-updated = "!git status --porcelain -uno | awk 'match($1, /U/) {print $2}'"
-  ls-staged = "!git status --porcelain -uno | grep -P '^[MA]' | awk '{ print $2 }'"
-  ls-untracked = "!git status --porcelain -uall | awk '$1 == \"??\" {print $2}'"
-  ls-ignored = ls-files --ignored --others --exclude-standard
-
-  lg = !"git lg1"
-  lg1 = !"git lg-fmt-1 --graph --topo-order --abbrev-commit --decorate=full --all"
-  lg2 = !"git lg-fmt-2 --graph --topo-order --abbrev-commit --decorate=full --all --stat"
-  lg-no-graph = !"git lg-fmt-1 --abbrev-commit --decorate=full"
+  lg = lg1
+  lg1 = lg-fmt-1 --graph --topo-order --abbrev-commit --decorate=full --all
+  lg2 = lg-fmt-2 --graph --topo-order --abbrev-commit --decorate=full --all --stat
+  lg-no-graph = lg-fmt-1 --abbrev-commit --decorate=full
 
   lg-fmt-1 = log --format=format:'%Cred%h%Creset %Cgreen(%ar)%Creset%C(auto)%d%Creset %C(bold)%s%Creset %Cblue%C(bold)%an%Creset'
   lg-fmt-2 = log --format=format:'─┬─ %Cred%h%Creset %Cgreen(%aI, %ar)%Creset%C(auto)%d%Creset%n └─ %C(bold)%s%Creset %Cblue%C(bold)%an%Creset%n'
@@ -32,37 +21,59 @@
   supdate = submodule update --remote --rebase
 
 [branch]
-  autoSetupMerge = true
   autoSetupRebase = always
+  sort = -committerdate
 
-[color]
-  branch = auto
-  diff = auto
-  interactive = auto
-  status = auto
-  ui = auto
+[commit]
+  verbose = true
 
 [core]
-  excludesFile = ~/.config/git/ignore
   autocrlf = input
   pager = less --quit-if-one-screen --RAW-CONTROL-CHARS --no-init --chop-long-lines
 
 [diff]
-  external = difft
+  algorithm = histogram
+  colorMoved = default
+
+[fetch]
+  prune = true
 
 [include]
+# Per-machine settings (name, e-mail, signing key, credential helper, ...) live
+# in this untracked file; see credentials.template
   path = ~/.config/git/credentials
 
+[init]
+  defaultBranch = main
+
 [merge]
-  conflictstyle = diff3
+  conflictstyle = zdiff3
   tool = vimdiff
-  ff = ff-only
+  ff = only
+
+[pull]
+  rebase = true
 
 [push]
   autoSetupRemote = true
+  followTags = true
+
+[rebase]
+  autoSquash = true
+  autoStash = true
+  updateRefs = true
 
 [rerere]
   enabled = true
+  autoupdate = true
 
 [status]
   submodulesummary = 1
+
+[tag]
+  sort = version:refname
+
+[user]
+# Refuse to commit when no identity is configured, instead of guessing
+# user@hostname on a machine where the credentials file is missing
+  useConfigOnly = true
