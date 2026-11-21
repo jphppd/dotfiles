@@ -37,8 +37,8 @@ if type alias >/dev/null 2>/dev/null; then
   # List files, using available ls options
   get_ls_parameters() {
     local LINE COLOR_OPT ESCAPE_OPT TIMESTYLE_OPT
-    # CFh = columns, classify, human
-    printf ' -C --classify --human-readable'
+    # classify, human
+    printf ' --classify --human-readable'
     # shellcheck disable=SC2012
     ls --help 2>&1 | (
       COLOR_OPT=
@@ -47,7 +47,7 @@ if type alias >/dev/null 2>/dev/null; then
       while IFS= read -r LINE; do
         case "$LINE" in
           *--color*)
-            COLOR_OPT=' --color=always'
+            COLOR_OPT=' --color=auto'
             ;;
           *--escape*)
             ESCAPE_OPT=' --escape'
@@ -126,25 +126,6 @@ if type alias >/dev/null 2>/dev/null; then
 
   # Show 3 months by default with cal
   alias cal='cal -3'
-
-  # Display date in ISO 8601 format
-  alias isodate='date --iso-8601'
-  alias isotime='date --iso-8601=seconds'
-  alias isoutctime='date -iso-8601=seconds --utc'
-
-  # OpenSSL shortcuts
-  # View a certificate request (add -verify to check it)
-  alias openssl-csr='openssl req -noout -text -in'
-  # View a x509 certificate
-  alias openssl-crt='openssl x509 -noout -text -in'
-  # View a binary (not base64-encoded) x509 certificate (DER format)
-  alias openssl-der='openssl x509 -noout -text -inform DER -in'
-  # View a PKCS#12 file (.pfx or .p12)
-  alias openssl-p12='openssl pkcs12 -info -in'
-  # View a RSA private key file
-  alias openssl-rsa='openssl rsa -noout -text -in'
-  # Make a SSL connection to IP:port
-  alias openssl-connect='openssl s_client -connect'
 
   # Colored "ip" command, since iproute2 4.1.0
   case $(ip --help 2>&1) in
