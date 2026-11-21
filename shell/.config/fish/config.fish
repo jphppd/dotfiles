@@ -9,7 +9,6 @@ if status is-interactive
     _check_cargo_install bat bat
     _check_cargo_install binsider binsider
     _check_cargo_install czkawka_cli czkawka_cli
-    _check_cargo_install difft difftastic
     _check_cargo_install dust du-dust
     _check_cargo_install eza eza
     _check_cargo_install fd fd-find

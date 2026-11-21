@@ -1,0 +1,6 @@
+# Replaces stow's default ignore list for this package, so it is repeated here
+\.git
+\.gitignore
+# Files of the LazyVim starter that must not be linked into ~/.config/nvim
+^/\.config/nvim/README\.md$
+^/\.config/nvim/LICENSE$

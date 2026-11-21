@@ -1,0 +1,4 @@
+# Never symlink a whole directory (for example ~/.ssh): link files only, so
+# that files that are not part of this repository (keys, caches, ...) never
+# end up inside it.
+--no-folding
